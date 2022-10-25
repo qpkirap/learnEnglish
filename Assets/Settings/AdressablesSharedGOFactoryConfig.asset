@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e5f101217d24d559c0e40e8d0ad72bd, type: 3}
   m_Name: AdressablesSharedGOFactoryConfig
   m_EditorClassIdentifier: 
-  TestControllerPrefab: {fileID: 1566725475298603607, guid: fcdf600153a99fe458721e6bcfccb54c, type: 3}
+  woodPrefab:
+    m_AssetGUID: 72c0115f70b981443abc0e9991d71b2e
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
