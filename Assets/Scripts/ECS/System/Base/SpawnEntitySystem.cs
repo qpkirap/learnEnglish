@@ -1,10 +1,10 @@
-﻿using ECS.Components.SpawnData;
-using ECS.Tags.Spawn;
+﻿using CraftCar.ECS.Components.SpawnData;
+using CraftCar.ECS.Tags.Spawn;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace ECS.System.Base
+namespace CraftCar.ECS.System.Base
 {
     public partial class SpawnEntitySystem : SystemBase
     {

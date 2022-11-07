@@ -1,7 +1,7 @@
 ﻿using Unity.Entities;
 using UnityEngine;
 
-namespace InitGame.GameResources.Base
+namespace CraftCar.InitGame.GameResources.Base
 {
     public interface IEntitySharedGameObjectConfig
     {

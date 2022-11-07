@@ -1,8 +1,8 @@
 ﻿using System;
-using InitGame.GameResources.Adressables;
+using CraftCar.InitGame.GameResources.Adressables;
 using UnityEngine;
 
-namespace InitGame.GameResources
+namespace CraftCar.InitGame.GameResources
 {
     [CreateAssetMenu(menuName = "Car/SimpleWoodenFactory", fileName = "SimpleWoodenFactory")]
     public class SimpleWoodenFactory : WoodenTileBaseFactory

@@ -3,7 +3,7 @@ using Unity.Entities;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace InitGame.GameResources.Adressables
+namespace CraftCar.InitGame.GameResources.Adressables
 {
     [CreateAssetMenu(menuName = "Car/WoodFactoryConfig", fileName = "WoodFactoryConfig")]
     public class WoodFactoryConfig : ScriptableObject

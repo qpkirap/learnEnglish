@@ -1,9 +1,8 @@
-﻿using Cysharp.Threading.Tasks;
-using InitGame.GameResources.Base;
-using Unity.Entities;
+﻿using CraftCar.InitGame.GameResources.Base;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace InitGame.GameResources.Adressables
+namespace CraftCar.InitGame.GameResources.Adressables
 {
     public abstract class WoodenTileBaseFactory : CreateEntityObjectsFactory
     {
