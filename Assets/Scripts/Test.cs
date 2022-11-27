@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class Test : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 {
-    [SerializeField] private WoodenTileBaseFactory testBaseFactory;
+    [SerializeField] private ViewLearnBaseFactory testBaseFactory;
     [SerializeField] private GameObject testPrefabGo;
     private BlobAssetStore _blobAssetStore;
     private Entity testEntity;
 
-    public WoodenTileBaseFactory TestBaseFactory => testBaseFactory;
+    public ViewLearnBaseFactory TestBaseFactory => testBaseFactory;
 
     void Start()
     {

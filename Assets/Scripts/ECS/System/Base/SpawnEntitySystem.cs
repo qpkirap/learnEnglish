@@ -27,8 +27,10 @@ namespace CraftCar.ECS.System.Base
                     Value = spawnData.spawnPosition
                 };
                 ecb.SetComponent(entityInQueryIndex, newEntity, translation);
+                ecb.RemoveComponent<SpawnTag>(entityInQueryIndex, e);
                 
             }).ScheduleParallel();
+            
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }
     }

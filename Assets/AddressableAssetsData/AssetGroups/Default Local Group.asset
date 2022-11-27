@@ -17,8 +17,8 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: fbe3ae2d305199b43a39d692fc8d637a
   m_SerializeEntries:
-  - m_GUID: 72c0115f70b981443abc0e9991d71b2e
-    m_Address: Assets/Settings/Cube.prefab
+  - m_GUID: acfc8f0936744f2489839b8cbe5161cc
+    m_Address: Assets/Prefabs/View - One.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

@@ -12,13 +12,11 @@ namespace CraftCar.InitGame.GameResources.Base
     {
         private static Dictionary<AssetReference, GameObject> loadedObjects = new Dictionary<AssetReference, GameObject>();
 
-        protected Entity CreateEntity(Entity prefab)
-        {
-            var _manager = World.DefaultGameObjectInjectionWorld.EntityManager;
-            var entity = _manager.Instantiate(prefab);
-            return entity;
-        }
-
+        protected abstract UniTask<Entity> InitEntityPrefab();
+        public abstract Entity GetPrefab { get; }
+        public abstract void Init();
+        public bool IsLoadPrefab { get; protected set; }
+        
         public static void ReleaseResources()
         {
             var loadReference = loadedObjects.Keys.ToArray();
