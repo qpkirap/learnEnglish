@@ -42,7 +42,9 @@ namespace CraftCar.InitGame.GameResources.Base
                 return null;
             }
             var handle = Addressables.LoadAssetAsync<GameObject>(key);
+            
             var go = await handle.Task;
+            
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
                 loadedObjects.Add(key, go);

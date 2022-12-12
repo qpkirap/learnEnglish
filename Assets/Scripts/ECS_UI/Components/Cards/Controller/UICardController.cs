@@ -1,10 +1,9 @@
-﻿using Unity.Entities;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace CraftCar.ECS_UI.Components
 {
-    public class UICardController : MonoBehaviour, IConvertGameObjectToEntity
+    public class UICardController : MonoBehaviour
     {
         [Header("First language")] 
         [SerializeField] private Text headText1;
@@ -25,13 +24,5 @@ namespace CraftCar.ECS_UI.Components
         public Text DescText2 => descText2;
 
         public Button NexButton => nexButton;
-
-        public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
-        {
-            dstManager.AddSharedComponentData(entity, new UICardControllerComponent()
-            {
-                uiCardController = this
-            });
-        }
     }
 }

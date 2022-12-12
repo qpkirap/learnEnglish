@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e5f101217d24d559c0e40e8d0ad72bd, type: 3}
   m_Name: ViewLearnFactoryConfig
   m_EditorClassIdentifier: 
-  woodPrefab:
+  uiCardPrefab:
     m_AssetGUID: acfc8f0936744f2489839b8cbe5161cc
     m_SubObjectName: 
     m_SubObjectType: 

@@ -2,8 +2,8 @@
 using CraftCar.InitGame.ECS.Components.Scene;
 using CraftCar.InitGame.GameResources;
 using CraftCar.InitGame.GameResources.Base;
-using Unity.Collections;
 using Unity.Entities;
+using Unity.Scenes;
 
 namespace CraftCar.ECS.System
 {
@@ -37,18 +37,21 @@ namespace CraftCar.ECS.System
             }
 
             isLoadAllFabrics = true;
+            
+            tempLoadFabrics.Clear();
+            
+            LoadGameScene();
         }
 
-        // private void LoadGameScene()
-        // {
-        //     
-        //     var gameSceneEntity = GetSingletonEntity<GameScene>();
-        //     var gameScene = EntityManager.GetComponentData<SceneReference>(gameSceneEntity);
-        //     
-        //     sceneSystem.LoadSceneAsync(gameScene.SceneGUID,
-        //         new SceneSystem.LoadParameters {AutoLoad = true, Flags = SceneLoadFlags.LoadAdditive});
-        //     
-        // }
+        private void LoadGameScene()
+        {
+            var sceneSystem = World.GetExistingSystem<SceneSystem>();
+            var gameSceneEntity = GetSingletonEntity<GameScene>();
+            var gameScene = EntityManager.GetComponentData<SceneReference>(gameSceneEntity);
+
+            sceneSystem.LoadSceneAsync(gameScene.SceneGUID,
+                new SceneSystem.LoadParameters {AutoLoad = true, Flags = SceneLoadFlags.LoadAdditive });
+        }
     }
     
     
