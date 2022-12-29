@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CraftCar.InitGame.GameResources.Base;
+using Cysharp.Threading.Tasks;
 using Unity.Entities;
 using UnityEngine;
 
@@ -10,46 +11,86 @@ namespace CraftCar
     [GenerateAuthoringComponent]
     public class FactoriesComponentData : IComponentData
     {
-        public List<CreateEntityObjectsFactory> UiCardFabrics;
+        public List<EntitySharedComponent> sharedFabrics;
+
+        public Dictionary<Type, EntitySharedComponent> sharedFabricsDic;
+        public Dictionary<Type, Entity> entitiesPrefabs;
         
-        public Dictionary<Type, CreateEntityObjectsFactory> uiCardsDictionary;
+        private static EntityManager manager => World.DefaultGameObjectInjectionWorld.EntityManager;
         
-        private void InitDictionary(List<CreateEntityObjectsFactory> listFabrics, ref Dictionary<Type, CreateEntityObjectsFactory> dictionary)
+        public Entity GetPrefab<T>() where T : EntitySharedComponent
         {
-            if (listFabrics != null && !dictionary.Any())
+            entitiesPrefabs ??= new();
+
+            if (entitiesPrefabs.TryGetValue(typeof(T), out var entity))
             {
-                for (int i = 0; i < listFabrics.Count; i++)
-                {
-                    if (listFabrics[i] != null)
-                    {
-                        var type = listFabrics[i].GetType();
-                        if (!dictionary.ContainsKey(type))
-                        {
-                            dictionary.Add(type, listFabrics[i]);
-                        }
-                        else Debug.LogError($"multi fabrics {listFabrics[i].name}");
-                    }
-                }
+                return entity;
+            }
+            else
+            {
+                var entityNew= manager.CreateEntity(typeof(T));
+
+                CreatePrefab<T>(entityNew);
+
+                return entityNew;
             }
         }
-        
-        public void InitTriggers()
+
+        private async UniTask CreatePrefab<T>(Entity entity) where T : EntitySharedComponent
         {
-            uiCardsDictionary ??= new();
-            InitDictionary(UiCardFabrics, ref uiCardsDictionary);
+            var needFabric = GetFabric<T>();
+
+            if (needFabric != null)
+            {
+                if (entitiesPrefabs.ContainsKey(typeof(T)))
+                {
+                    entitiesPrefabs[typeof(T)] = entity;
+                }
+                else entitiesPrefabs.Add(typeof(T), entity);
+                
+                await needFabric.Create(entity);
+            }
+            else Debug.LogError($"{this.GetType().Name} CreatePrefab fabric not found");
         }
         
-        public T GetFabric<T>() where T : CreateEntityObjectsFactory
+        
+        private T GetFabric<T>() where T : EntitySharedComponent
         {
-            InitTriggers();
+            sharedFabricsDic ??= new();
+            
+            if (!sharedFabricsDic.Any() && sharedFabrics != null) InitDictionary();
+            
             var type = typeof(T);
-            if (uiCardsDictionary.TryGetValue(type, out var factory))
+            
+            if (sharedFabricsDic.TryGetValue(type, out var factory))
             {
                 return (T)factory;
             }
+            
             Debug.LogError($"fabric not found {typeof(T).Name}");
 
             return null;
+        }
+        
+        private void InitDictionary()
+        {
+            if (sharedFabrics != null && !sharedFabricsDic.Any())
+            {
+                for (int i = 0; i < sharedFabrics.Count; i++)
+                {
+                    if (sharedFabrics[i] != null)
+                    {
+                        var type = sharedFabrics[i].GetType();
+                        
+                        if (!sharedFabricsDic.ContainsKey(type))
+                        {
+                            sharedFabricsDic.Add(type, sharedFabrics[i]);
+                        }
+                        
+                        else Debug.LogError($"multi fabrics {sharedFabrics[i].name}");
+                    }
+                }
+            }
         }
     }
 }

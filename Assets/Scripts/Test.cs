@@ -1,17 +1,14 @@
 using System.Collections.Generic;
-using CraftCar.InitGame.GameResources.Adressables;
 using Cysharp.Threading.Tasks;
 using Unity.Entities;
 using UnityEngine;
 
 public class Test : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 {
-    [SerializeField] private ViewLearnBaseFactory testBaseFactory;
     [SerializeField] private GameObject testPrefabGo;
     private BlobAssetStore _blobAssetStore;
     private Entity testEntity;
 
-    public ViewLearnBaseFactory TestBaseFactory => testBaseFactory;
 
     void Start()
     {

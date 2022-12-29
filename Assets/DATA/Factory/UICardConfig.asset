@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19c77f2c02fd4fe78a072a272a1ecc40, type: 3}
-  m_Name: SimpleViewLearnFactory
+  m_Script: {fileID: 11500000, guid: 337368da4df84e32b5d69b7aef00f207, type: 3}
+  m_Name: UICardConfig
   m_EditorClassIdentifier: 
-  viewLearnData:
-    config: {fileID: 11400000, guid: 5042c27972a86d34dbcbacadb86b7eaf, type: 2}
+  go: {fileID: 11400000, guid: e7f273fe8efb34f24ad389d19512577a, type: 2}

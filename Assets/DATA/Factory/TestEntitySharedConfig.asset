@@ -9,11 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e5f101217d24d559c0e40e8d0ad72bd, type: 3}
-  m_Name: ViewLearnFactoryConfig
+  m_Script: {fileID: 11500000, guid: 5c766cdeb76449b788aa34ea470ba790, type: 3}
+  m_Name: TestEntitySharedConfig
   m_EditorClassIdentifier: 
-  uiCardPrefab:
-    m_AssetGUID: acfc8f0936744f2489839b8cbe5161cc
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
+  cardControllerConfig: {fileID: 11400000, guid: 24eec86a12bb74f0fa8e941523ffba2f, type: 2}

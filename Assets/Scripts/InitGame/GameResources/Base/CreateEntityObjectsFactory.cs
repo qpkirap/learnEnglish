@@ -10,13 +10,15 @@ namespace CraftCar.InitGame.GameResources.Base
 {
     public abstract class CreateEntityObjectsFactory : ScriptableObject
     {
+        [SerializeField] protected FactoryConfig factoryConfig;
+        
         private static Dictionary<AssetReference, GameObject> loadedObjects = new Dictionary<AssetReference, GameObject>();
 
         protected abstract UniTask<Entity> InitEntityPrefab();
         public abstract Entity GetPrefab { get; }
         public abstract void Init();
         public bool IsLoadPrefab { get; protected set; }
-        
+
         public static void ReleaseResources()
         {
             var loadReference = loadedObjects.Keys.ToArray();

@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using CraftCar.InitGame.ECS.Components.Scene;
-using CraftCar.InitGame.GameResources;
-using CraftCar.InitGame.GameResources.Base;
+﻿using CraftCar.ECS.Components.Tags;
+using CraftCar.InitGame.ECS.Config;
 using Unity.Entities;
 using Unity.Scenes;
 
@@ -10,47 +8,37 @@ namespace CraftCar.ECS.System
     //[UpdateInGroup(typeof(GameObjectDeclareReferencedObjectsGroup))]
     public partial class InitSystem : SystemBase
     {
-        private List<CreateEntityObjectsFactory> tempLoadFabrics;
-        
-        private bool isLoadAllFabrics;
+        private Entity testEntity;
+        private bool isLoadScene;
 
         protected override void OnStartRunning()
         {
             var factorysEntity = GetSingletonEntity<FactoriesComponentData>();
             var factorysData = EntityManager.GetComponentData<FactoriesComponentData>(factorysEntity);
-            var cardFactory = factorysData.GetFabric<SimpleViewLearnFactory>();
-
-            tempLoadFabrics = new List<CreateEntityObjectsFactory>(factorysData.UiCardFabrics.Count);
-
-            cardFactory.Init();
             
-            tempLoadFabrics.Add(cardFactory);
+            testEntity = factorysData.GetPrefab<TestEntitySharedConfig>();
         }
 
         protected override void OnUpdate()
         {
-            if (isLoadAllFabrics || tempLoadFabrics == null) return;
-
-            foreach (var entityObjectsFactory in tempLoadFabrics)
+            if (!isLoadScene && EntityManager.HasComponent<ReadyPrefabTag>(testEntity))
             {
-                if (!entityObjectsFactory.IsLoadPrefab) return;
+                isLoadScene = true;
+                
+                LoadGameScene();
             }
-
-            isLoadAllFabrics = true;
-            
-            tempLoadFabrics.Clear();
-            
-            LoadGameScene();
         }
 
         private void LoadGameScene()
         {
             var sceneSystem = World.GetExistingSystem<SceneSystem>();
-            var gameSceneEntity = GetSingletonEntity<GameScene>();
-            var gameScene = EntityManager.GetComponentData<SceneReference>(gameSceneEntity);
+            
+            var gameSceneEntity = GetSingletonEntity<SceneReference>();
+            
+            var gameSceneEntityData = EntityManager.GetComponentData<SceneReference>(gameSceneEntity);
 
-            sceneSystem.LoadSceneAsync(gameScene.SceneGUID,
-                new SceneSystem.LoadParameters {AutoLoad = true, Flags = SceneLoadFlags.LoadAdditive });
+            sceneSystem.LoadSceneAsync(gameSceneEntityData.SceneGUID,
+                new SceneSystem.LoadParameters {AutoLoad = false, Flags = SceneLoadFlags.LoadAsGOScene });
         }
     }
     

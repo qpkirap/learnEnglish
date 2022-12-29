@@ -7,6 +7,11 @@ namespace CraftCar.ECS_UI.Components
     {
         public UICardController uiCardController;
 
+        public UICardControllerComponent(UICardController uiCardController)
+        {
+            this.uiCardController = uiCardController;
+        }
+
         public bool Equals(UICardControllerComponent other)
         {
             return Equals(uiCardController, other.uiCardController);
