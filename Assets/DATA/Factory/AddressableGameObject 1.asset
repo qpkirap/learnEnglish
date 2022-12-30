@@ -9,7 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 337368da4df84e32b5d69b7aef00f207, type: 3}
-  m_Name: UICardConfig
+  m_Script: {fileID: 11500000, guid: bb1b30c4bdf348e4b1cb4698ae12ecdb, type: 3}
+  m_Name: AddressableGameObject 1
   m_EditorClassIdentifier: 
-  go: {fileID: 11400000, guid: aa217ab8ed662412fb1905ac08a39352, type: 2}
+  goAsset:
+    m_AssetGUID: acfc8f0936744f2489839b8cbe5161cc
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0

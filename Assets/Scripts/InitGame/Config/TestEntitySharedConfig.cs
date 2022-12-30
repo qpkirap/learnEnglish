@@ -21,9 +21,9 @@ namespace CraftCar.InitGame.ECS.Config
                 {
                     if (go.TryGetComponent<UICardController>(out UICardController uiCardController))
                     {
-                        var test = Instantiate(uiCardController);
+                        var instance = Instantiate(uiCardController);
                         
-                        return new(uiCardController: test);
+                        return new(uiCardInstance: instance);
                     }
                 }
             }

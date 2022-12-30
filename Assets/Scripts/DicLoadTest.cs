@@ -7,6 +7,5 @@ namespace CraftCar
     public class DicLoadTest : IComponentData
     {
         public DicJsonConfigAsset data;
-        
     }
 }

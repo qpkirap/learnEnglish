@@ -5,16 +5,16 @@ namespace CraftCar.ECS_UI.Components
 {
     public struct UICardControllerComponent : ISharedComponentData, IEquatable<UICardControllerComponent>
     {
-        public UICardController uiCardController;
+        public UICardController uiCardInstance;
 
-        public UICardControllerComponent(UICardController uiCardController)
+        public UICardControllerComponent(UICardController uiCardInstance)
         {
-            this.uiCardController = uiCardController;
+            this.uiCardInstance = uiCardInstance;
         }
 
         public bool Equals(UICardControllerComponent other)
         {
-            return Equals(uiCardController, other.uiCardController);
+            return Equals(uiCardInstance, other.uiCardInstance);
         }
 
         public override bool Equals(object obj)
@@ -24,7 +24,7 @@ namespace CraftCar.ECS_UI.Components
 
         public override int GetHashCode()
         {
-            return (uiCardController != null ? uiCardController.GetHashCode() : 0);
+            return (uiCardInstance != null ? uiCardInstance.GetHashCode() : 0);
         }
     }
 }

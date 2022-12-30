@@ -39,7 +39,6 @@ namespace CraftCar.ECS.System
 
         protected override void OnUpdate()
         {
-            
         }
     }
 }

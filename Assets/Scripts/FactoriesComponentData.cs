@@ -30,6 +30,8 @@ namespace CraftCar
             {
                 var entityNew= manager.CreateEntity(typeof(T));
 
+                manager.AddComponent<Prefab>(entityNew);
+
                 CreatePrefab<T>(entityNew);
 
                 return entityNew;
