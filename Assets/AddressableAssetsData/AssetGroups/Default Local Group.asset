@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: Assets/Prefabs/View - One.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: d07989140cb394bae91f161ab0afd0ae
+    m_Address: Assets/Prefabs/Cube.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f248fc8a44eda134f854543b5cb60040, type: 2}
   m_SchemaSet:
