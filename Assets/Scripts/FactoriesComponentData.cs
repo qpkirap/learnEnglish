@@ -50,7 +50,7 @@ namespace CraftCar
                 }
                 else entitiesPrefabs.Add(typeof(T), entity);
                 
-                await needFabric.Create(entity);
+                await needFabric.Init(entity);
             }
             else Debug.LogError($"{this.GetType().Name} CreatePrefab fabric not found");
         }

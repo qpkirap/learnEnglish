@@ -20,7 +20,7 @@ namespace CraftCar.InitGame.GameResources.Base
         
 
         //TODO перед созданием сущности нужно создать архетип
-        public async override UniTask Create(Entity entity)
+        public async override UniTask Init(Entity entity)
         {
             var component = await GetComponent(entity);
 
@@ -33,7 +33,7 @@ namespace CraftCar.InitGame.GameResources.Base
 
     public abstract class EntitySharedComponent : Component
     {
-        public abstract UniTask Create(Entity entity);
+        public abstract UniTask Init(Entity entity);
     } 
     
     public abstract class FactoryConfig<TConfig> : FactoryConfig
