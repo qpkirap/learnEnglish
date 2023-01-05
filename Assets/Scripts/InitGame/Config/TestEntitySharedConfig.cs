@@ -27,6 +27,8 @@ namespace CraftCar.InitGame.ECS.Config
                     }
                 }
             }
+            
+            //TODO добавить фабричный метод
 
             return default;
         }
