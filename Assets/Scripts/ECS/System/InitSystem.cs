@@ -1,10 +1,12 @@
 ﻿using CraftCar.ECS.Components.Tags;
 using CraftCar.InitGame.ECS.Config;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Scenes;
 
 namespace CraftCar.ECS.System
 {
+    [AlwaysUpdateSystem]
     //[UpdateInGroup(typeof(GameObjectDeclareReferencedObjectsGroup))]
     public partial class InitSystem : SystemBase
     {
@@ -12,7 +14,9 @@ namespace CraftCar.ECS.System
         
         private Entity testEntity;
         private Entity gameSceneEntity;
-        
+
+        private NativeArray<Entity> fabricsCard;
+
         public bool IsInit { get; private set; }
 
         protected override void OnStartRunning()
@@ -20,18 +24,26 @@ namespace CraftCar.ECS.System
             sceneSystem = World.GetExistingSystem<SceneSystem>();
             gameSceneEntity = GetSingletonEntity<SceneReference>();
             
-            var factorysEntity = GetSingletonEntity<FactoriesComponentData>();
-            var factorysData = EntityManager.GetComponentData<FactoriesComponentData>(factorysEntity);
-            
-            testEntity = factorysData.GetPrefab<TestEntitySharedConfig>();
+            var factorysEntity = GetSingletonEntity<FactoriesCardData>();
+            var factorysData = EntityManager.GetComponentData<FactoriesCardData>(factorysEntity);
+
+            fabricsCard = factorysData.InitAllFabrics();
         }
 
         protected override void OnUpdate()
         {
+            if(fabricsCard == null || !fabricsCard.IsCreated) return;
+            
+            foreach (var entity in fabricsCard)
+            {
+                if(!EntityManager.HasComponent<ReadyPrefabTag>(entity)) return;
+            }
+
+            fabricsCard.Dispose();
+            
             if (IsInit) return;
             
-            if (!sceneSystem.IsSceneLoaded(gameSceneEntity) 
-                && EntityManager.HasComponent<ReadyPrefabTag>(testEntity))
+            if (!sceneSystem.IsSceneLoaded(gameSceneEntity))
             {
                 LoadGameScene();
 

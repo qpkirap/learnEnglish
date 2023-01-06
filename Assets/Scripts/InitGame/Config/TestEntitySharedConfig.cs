@@ -11,26 +11,22 @@ namespace CraftCar.InitGame.ECS.Config
     {
         [SerializeField] private UICardControllerConfig cardControllerConfig;
 
-        public override async UniTask<UICardControllerComponent> GetComponent(Entity entity)
+        protected override async UniTask<UICardControllerComponent> InitComponent()
         {
-            if (entity != Entity.Null)
-            {
-                var go = await cardControllerConfig.GetConfig().Go.GetGameObjectPrefabAsync(tokenSource.Token);
+            var go = await cardControllerConfig.GetConfig().Go.GetGameObjectPrefabAsync(tokenSource.Token);
 
-                if (go != null)
+            if (go != null) 
+            {
+                if (go.TryGetComponent<UICardController>(out UICardController uiCardController))
                 {
-                    if (go.TryGetComponent<UICardController>(out UICardController uiCardController))
-                    {
-                        var instance = Instantiate(uiCardController);
+                    var instance = Instantiate(uiCardController);
                         
-                        return new(uiCardInstance: instance);
-                    }
+                    return new(uiCardInstance: instance);
                 }
             }
-            
-            //TODO добавить фабричный метод
-
+          
             return default;
         }
+        
     }
 }

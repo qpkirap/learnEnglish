@@ -3,9 +3,11 @@ using Unity.Entities;
 
 namespace CraftCar.ECS_UI.Components
 {
-    public struct UICardControllerComponent : ISharedComponentData, IEquatable<UICardControllerComponent>
+    public struct UICardControllerComponent : ISharedComponentData, IEquatable<UICardControllerComponent>, ICardInstance
     {
         public UICardController uiCardInstance;
+
+        public UICardController GetInstance => uiCardInstance;
 
         public UICardControllerComponent(UICardController uiCardInstance)
         {

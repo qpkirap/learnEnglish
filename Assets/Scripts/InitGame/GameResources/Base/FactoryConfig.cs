@@ -1,32 +1,95 @@
+using System;
 using System.Threading;
+using CraftCar.ECS_UI.Components;
+using CraftCar.ECS.Components;
 using CraftCar.ECS.Components.Tags;
 using Cysharp.Threading.Tasks;
+using Game.CustomPool;
 using Unity.Entities;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace CraftCar.InitGame.GameResources.Base
 {
+    public abstract class CardMonoSharedComponent<TSharedConfig, TCardController, TConcreteShared> : CardMonoSharedComponent
+        where TSharedConfig : EntitySharedComponent
+        where TCardController : UICardController
+        where TConcreteShared : struct, ICardInstance
+    {
+        [SerializeField] protected TSharedConfig config;
+        
+        protected static EntityManager manager => World.DefaultGameObjectInjectionWorld.EntityManager;
+
+        public override async UniTask Init(Entity entity)
+        {
+            await config.Init(entity);
+        }
+
+        public override UICardController GetInstance(Entity entity)
+        {
+            return GetConcreteInstance(entity);
+        }
+
+        public override Type GetSharedType => typeof(TConcreteShared);
+
+        protected virtual TCardController GetPrefab(Entity entity)
+        {
+            config.CreateInstance(entity);
+
+            var data = manager.GetSharedComponentData<TConcreteShared>(entity);
+
+            return (TCardController) data.GetInstance;
+        }
+        
+        private TCardController GetConcreteInstance(Entity entity)
+        {
+            var go = GetPrefab(entity).gameObject;
+            
+            return PoolManager.Instance.SpawnObject(go).GetComponent<TCardController>();
+        }
+    }
+
+    public abstract class CardMonoSharedComponent : Component
+    {
+        public abstract UniTask Init(Entity entity);
+        public abstract UICardController GetInstance(Entity entity);
+
+        public abstract Type GetSharedType { get; }
+    }
+    
+
     public abstract class EntitySharedComponent <TComponent> : EntitySharedComponent
         where TComponent : struct, ISharedComponentData
     {
         protected static EntityManager manager => World.DefaultGameObjectInjectionWorld.EntityManager;
         protected static CancellationTokenSource tokenSource = new();
+        protected TComponent instance;
         
-        public virtual async UniTask<TComponent> GetComponent(Entity entity)
+        protected virtual async UniTask<TComponent> InitComponent()
         {
             return default;
         }
-        
+
+        private TComponent GetInstance()
+        {
+            return instance;
+        }
+
 
         //TODO перед созданием сущности нужно создать архетип
         public async override UniTask Init(Entity entity)
         {
-            var component = await GetComponent(entity);
+            instance = await InitComponent();
 
-            manager.AddSharedComponentData(entity, component);
+            manager.AddSharedComponentData(entity, instance);
 
             manager.AddComponentData(entity, new ReadyPrefabTag());
+        }
+
+        public override void CreateInstance(Entity entity)
+        {
+            manager.AddComponentData(entity, new InstanceTag());
+            
+            manager.AddSharedComponentData(entity, instance);
         }
     }
     
@@ -34,6 +97,8 @@ namespace CraftCar.InitGame.GameResources.Base
     public abstract class EntitySharedComponent : Component
     {
         public abstract UniTask Init(Entity entity);
+
+        public abstract void CreateInstance(Entity entity);
     } 
     
     public abstract class FactoryConfig<TConfig> : FactoryConfig

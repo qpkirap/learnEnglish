@@ -33,6 +33,7 @@ namespace Util
                     {
                         GameObject singleton = new GameObject();
                         instance = singleton.AddComponent<T>();
+                        
                         singleton.name = string.Format("{0}(singleton)", typeof(T).ToString());
 
                         Singleton<T> component = instance.GetComponent<Singleton<T>>();

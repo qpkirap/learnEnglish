@@ -20,7 +20,7 @@ namespace Game.CustomPool
 		
 		public Transform root => rootTransform.transform;
 
-		public PoolManager()
+		private void OnEnable()
 		{
 			prefabLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
 			instanceLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
@@ -32,7 +32,7 @@ namespace Game.CustomPool
 			rootTransform.name = "PoolRoot";
 #endif
 		}
-		
+
 
 		public void warmPool(GameObject prefab, int size)
 		{
