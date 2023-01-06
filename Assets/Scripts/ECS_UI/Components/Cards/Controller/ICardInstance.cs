@@ -4,6 +4,6 @@ namespace CraftCar.ECS_UI.Components
 {
     public interface ICardInstance : ISharedComponentData
     {
-        public UICardController GetInstance { get; }
+        public UICardController Instance { get; set; }
     }
 }

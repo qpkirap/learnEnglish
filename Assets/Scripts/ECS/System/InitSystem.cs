@@ -12,7 +12,6 @@ namespace CraftCar.ECS.System
     {
         private SceneSystem sceneSystem;
         
-        private Entity testEntity;
         private Entity gameSceneEntity;
 
         private NativeArray<Entity> fabricsCard;
@@ -32,6 +31,20 @@ namespace CraftCar.ECS.System
 
         protected override void OnUpdate()
         {
+            if (IsInit) return;
+            
+            InitCardFabrics();
+            
+            if (!sceneSystem.IsSceneLoaded(gameSceneEntity))
+            {
+                LoadGameScene();
+
+                IsInit = true;
+            }
+        }
+
+        private void InitCardFabrics()
+        {
             if(fabricsCard == null || !fabricsCard.IsCreated) return;
             
             foreach (var entity in fabricsCard)
@@ -40,15 +53,6 @@ namespace CraftCar.ECS.System
             }
 
             fabricsCard.Dispose();
-            
-            if (IsInit) return;
-            
-            if (!sceneSystem.IsSceneLoaded(gameSceneEntity))
-            {
-                LoadGameScene();
-
-                IsInit = true;
-            }
         }
 
         private void LoadGameScene()

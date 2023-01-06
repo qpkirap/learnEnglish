@@ -1,8 +1,9 @@
 ﻿using Unity.Collections;
+using Unity.Entities;
 
 namespace CraftCar.ECS.Components.SpawnData
 {
-    public struct DicElementData
+    public struct DicElementData : IComponentData
     {
         public readonly int id;
         public readonly FixedString512Bytes en, ru, tr;

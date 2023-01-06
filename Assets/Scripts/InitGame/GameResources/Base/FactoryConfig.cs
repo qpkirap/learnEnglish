@@ -38,14 +38,25 @@ namespace CraftCar.InitGame.GameResources.Base
 
             var data = manager.GetSharedComponentData<TConcreteShared>(entity);
 
-            return (TCardController) data.GetInstance;
+            return (TCardController) data.Instance;
         }
         
         private TCardController GetConcreteInstance(Entity entity, RectTransform parent = null)
         {
             var go = GetPrefab(entity).gameObject;
             
-            return PoolManager.Instance.SpawnObject(go, Vector3.zero, Quaternion.identity, parent).GetComponent<TCardController>();
+            var instance = PoolManager
+                .Instance
+                .SpawnObject(go, Vector3.zero, Quaternion.identity, parent)
+                .GetComponent<TCardController>();
+
+            var reference = manager.GetSharedComponentData<TConcreteShared>(entity);
+
+            reference.Instance = instance;
+            
+            manager.SetSharedComponentData(entity, reference);
+            
+            return instance;
         }
     }
 
@@ -70,13 +81,6 @@ namespace CraftCar.InitGame.GameResources.Base
             return default;
         }
 
-        private TComponent GetInstance()
-        {
-            return instance;
-        }
-
-
-        //TODO перед созданием сущности нужно создать архетип
         public async override UniTask Init(Entity entity)
         {
             instance = await InitComponent();

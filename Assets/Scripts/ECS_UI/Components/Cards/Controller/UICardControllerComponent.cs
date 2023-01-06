@@ -7,7 +7,11 @@ namespace CraftCar.ECS_UI.Components
     {
         public UICardController uiCardInstance;
 
-        public UICardController GetInstance => uiCardInstance;
+        public UICardController Instance
+        {
+            get => uiCardInstance;
+            set => uiCardInstance = value;
+        }
 
         public UICardControllerComponent(UICardController uiCardInstance)
         {

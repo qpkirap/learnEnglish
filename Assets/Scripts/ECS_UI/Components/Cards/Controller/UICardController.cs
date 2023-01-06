@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UniRx;
+using Unity.Entities;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace CraftCar.ECS_UI.Components
@@ -17,6 +20,9 @@ namespace CraftCar.ECS_UI.Components
         [Header("Body")] 
         [SerializeField] private Button nexButton;
 
+        private static EntityManager _manager => World.DefaultGameObjectInjectionWorld.EntityManager;
+        private CompositeDisposable disposable = new();
+
         public RectTransform Root => root;
         
         public Text HeadText1 => headText1;
@@ -28,5 +34,18 @@ namespace CraftCar.ECS_UI.Components
         public Text DescText2 => descText2;
 
         public Button NexButton => nexButton;
+
+        private void OnEnable()
+        {
+            nexButton.OnClickAsObservable().Subscribe(x =>
+            {
+                
+            }).AddTo(disposable);
+        }
+
+        private void OnDisable()
+        {
+            disposable.Clear();
+        }
     }
 }

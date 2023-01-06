@@ -1,5 +1,6 @@
 ﻿using CraftCar.ECS_UI.Components;
 using CraftCar.ECS.Components;
+using CraftCar.ECS.Components.SpawnData;
 using CraftCar.InitGame.ECS.Config;
 using Unity.Entities;
 using UnityEngine;
@@ -16,10 +17,8 @@ namespace CraftCar.ECS.System.SpawnCard
         
         protected override void OnUpdate()
         {
-            if (!HasSingleton<FactoriesCardData>())
-            {
-                return;
-            }
+            if (!HasSingleton<FactoriesCardData>()) return;
+            if (!HasSingleton<EntityDicElementsData>()) return;
             
             int countCard = 0;
 
@@ -30,21 +29,30 @@ namespace CraftCar.ECS.System.SpawnCard
 
             if (countCard == 0)
             {
-                var canvas = GetCanvas();
-                
-                if (canvas == null) return;
-                
-                var cardEntity = EntityManager.CreateEntity(typeof(CardTag));
-                EntityManager.AddComponentData(cardEntity, new CardTag());
-                
-                var factorysEntity = GetSingletonEntity<FactoriesCardData>();
-                var factories = EntityManager.GetComponentData<FactoriesCardData>(factorysEntity);
-
-                
-
-                factories.CreateCardInstance<TestCardMono>(cardEntity, canvas.root);
+                CreateCard();
             }
             
+        }
+
+        private void CreateCard()
+        {
+            var canvas = GetCanvas();
+                
+            if (canvas == null) return;
+
+            var dicData = GetSingleton<EntityDicElementsData>();
+                
+            var cardEntity = EntityManager.CreateEntity(typeof(CardTag));
+            EntityManager.AddComponentData(cardEntity, new CardTag());
+                
+            var factorysEntity = GetSingletonEntity<FactoriesCardData>();
+            var factories = EntityManager.GetComponentData<FactoriesCardData>(factorysEntity);
+
+            var randomData = dicData.GetRandomData();
+
+            factories.CreateCardInstance<TestCardMono>(cardEntity, canvas.root);
+
+            EntityManager.AddComponentData(cardEntity, randomData);
         }
 
         private UICanvasController GetCanvas()
