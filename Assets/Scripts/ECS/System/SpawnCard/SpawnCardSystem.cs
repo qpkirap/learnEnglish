@@ -20,11 +20,6 @@ namespace CraftCar.ECS.System.SpawnCard
             {
                 return;
             }
-            if (!HasSingleton<UICanvasAuthoring>())
-            {
-                return;
-            }
-            
             
             int countCard = 0;
 
@@ -35,18 +30,33 @@ namespace CraftCar.ECS.System.SpawnCard
 
             if (countCard == 0)
             {
+                var canvas = GetCanvas();
+                
+                if (canvas == null) return;
+                
                 var cardEntity = EntityManager.CreateEntity(typeof(CardTag));
                 EntityManager.AddComponentData(cardEntity, new CardTag());
                 
                 var factorysEntity = GetSingletonEntity<FactoriesCardData>();
                 var factories = EntityManager.GetComponentData<FactoriesCardData>(factorysEntity);
 
-                var canvasEntity = GetSingletonEntity<Canvas>();
-                var canvasData = EntityManager.GetComponentData<UICanvasAuthoring>(canvasEntity);
+                
 
-                factories.CreateCardInstance<TestCardMono>(cardEntity);
+                factories.CreateCardInstance<TestCardMono>(cardEntity, canvas.root);
             }
             
+        }
+
+        private UICanvasController GetCanvas()
+        {
+            UICanvasController canvas = null;
+            
+            Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
+            {
+                canvas = canvasController;
+            }).WithoutBurst().Run();
+
+            return canvas;
         }
     }
 }

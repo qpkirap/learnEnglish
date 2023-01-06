@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using Transform = log4net.Util.Transform;
 
 namespace CraftCar
 {
@@ -19,13 +20,13 @@ namespace CraftCar
 
         private static EntityManager manager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        public UICardController CreateCardInstance<T>(Entity entity) where T :CardMonoSharedComponent
+        public UICardController CreateCardInstance<T>(Entity entity, RectTransform parent = null) where T :CardMonoSharedComponent
         {
             var needFabrics = GetFabric<T>();
 
             if (needFabrics != null)
             {
-                return needFabrics.GetInstance(entity);
+                return needFabrics.GetInstance(entity, parent);
             }
 
             return null;

@@ -17,25 +17,45 @@ namespace Game.CustomPool
 		private GameObject rootTransform;
 
 		private bool dirty = false;
+
+		private bool isInit;
 		
-		public Transform root => rootTransform.transform;
+		public Transform root => GetRoot();
 
 		private void OnEnable()
 		{
+			Init();
+		}
+
+		private void Init()
+		{
+			if (isInit) return;
+			
 			prefabLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
 			instanceLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
-			rootTransform = new GameObject();
-			
-			UnityEngine.Object.DontDestroyOnLoad(rootTransform);
-			
+
+			isInit = true;
+		}
+
+		private Transform GetRoot()
+		{
+			if (rootTransform == null)
+			{
+				rootTransform = new GameObject();
+				UnityEngine.Object.DontDestroyOnLoad(rootTransform);
+				
 #if UNITY_EDITOR
-			rootTransform.name = "PoolRoot";
+				rootTransform.name = "PoolRoot";
 #endif
+			}
+			return rootTransform.transform;
 		}
 
 
 		public void warmPool(GameObject prefab, int size)
 		{
+			Init();
+			
 			if (prefabLookup.ContainsKey(prefab))
 			{
 				throw new Exception("Pool for prefab " + prefab.name + " has already been created");
@@ -73,7 +93,7 @@ namespace Game.CustomPool
 			
 			clone.SetActive(true);
 			
-			if (parent != null) clone.transform.SetParent(parent);
+			if (parent != null) clone.transform.SetParent(parent, false);
 
 			instanceLookup.Add(clone, pool);
 			

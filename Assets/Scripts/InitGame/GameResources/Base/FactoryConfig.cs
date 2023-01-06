@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using Game.CustomPool;
 using Unity.Entities;
 using UnityEngine;
+using Transform = log4net.Util.Transform;
 
 namespace CraftCar.InitGame.GameResources.Base
 {
@@ -24,9 +25,9 @@ namespace CraftCar.InitGame.GameResources.Base
             await config.Init(entity);
         }
 
-        public override UICardController GetInstance(Entity entity)
+        public override UICardController GetInstance(Entity entity, RectTransform parent = null)
         {
-            return GetConcreteInstance(entity);
+            return GetConcreteInstance(entity, parent);
         }
 
         public override Type GetSharedType => typeof(TConcreteShared);
@@ -40,18 +41,18 @@ namespace CraftCar.InitGame.GameResources.Base
             return (TCardController) data.GetInstance;
         }
         
-        private TCardController GetConcreteInstance(Entity entity)
+        private TCardController GetConcreteInstance(Entity entity, RectTransform parent = null)
         {
             var go = GetPrefab(entity).gameObject;
             
-            return PoolManager.Instance.SpawnObject(go).GetComponent<TCardController>();
+            return PoolManager.Instance.SpawnObject(go, Vector3.zero, Quaternion.identity, parent).GetComponent<TCardController>();
         }
     }
 
     public abstract class CardMonoSharedComponent : Component
     {
         public abstract UniTask Init(Entity entity);
-        public abstract UICardController GetInstance(Entity entity);
+        public abstract UICardController GetInstance(Entity entity, RectTransform parent = null);
 
         public abstract Type GetSharedType { get; }
     }

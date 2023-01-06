@@ -20,7 +20,10 @@ namespace CraftCar.InitGame.ECS.Config
                 if (go.TryGetComponent<UICardController>(out UICardController uiCardController))
                 {
                     var instance = Instantiate(uiCardController);
-                        
+                    instance.Root.localScale = Vector3.one;
+                    instance.Root.sizeDelta = Vector2.zero;
+                    instance.Root.position = Vector3.zero;
+
                     return new(uiCardInstance: instance);
                 }
             }
