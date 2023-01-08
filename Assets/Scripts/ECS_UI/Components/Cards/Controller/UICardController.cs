@@ -1,4 +1,5 @@
 ﻿using System;
+using CraftCar.ECS.Components.Tags;
 using UniRx;
 using Unity.Entities;
 using UnityEngine;
@@ -22,6 +23,8 @@ namespace CraftCar.ECS_UI.Components
 
         private static EntityManager _manager => World.DefaultGameObjectInjectionWorld.EntityManager;
         private CompositeDisposable disposable = new();
+        private Entity entity;
+        private EntityManager manager;
 
         public RectTransform Root => root;
         
@@ -35,11 +38,25 @@ namespace CraftCar.ECS_UI.Components
 
         public Button NexButton => nexButton;
 
+        public void Inject(Entity entity, EntityManager manager)
+        {
+            this.entity = entity;
+            this.manager = manager;
+        }
+
+        private void OnClick()
+        {
+            if (entity != Entity.Null)
+            {
+                manager.AddComponentData(entity, new ClickNextButtonTag());
+            }
+        }
+
         private void OnEnable()
         {
             nexButton.OnClickAsObservable().Subscribe(x =>
             {
-                
+                OnClick();
             }).AddTo(disposable);
         }
 

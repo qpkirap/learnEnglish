@@ -50,9 +50,11 @@ namespace CraftCar.ECS.System.SpawnCard
 
             var randomData = dicData.GetRandomData();
 
-            factories.CreateCardInstance<TestCardMono>(cardEntity, canvas.root);
+            var cardController = factories.CreateCardInstance<TestCardMono>(cardEntity, canvas.root);
 
             EntityManager.AddComponentData(cardEntity, randomData);
+            
+            cardController.Inject(cardEntity, EntityManager);
         }
 
         private UICanvasController GetCanvas()
