@@ -53,7 +53,7 @@ namespace CraftCar.InitGame.GameResources.Base
             var reference = manager.GetSharedComponentData<TConcreteShared>(entity);
 
             reference.Instance = instance;
-            
+
             manager.SetSharedComponentData(entity, reference);
             
             return instance;
