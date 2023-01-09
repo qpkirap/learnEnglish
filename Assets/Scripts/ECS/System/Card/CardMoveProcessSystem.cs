@@ -11,8 +11,8 @@ namespace CraftCar.ECS.System.Card
         {
             Entities.WithAll<UICardControllerComponent, CardMoveProcess>().ForEach((Entity e, CardMoveProcess move, UICardControllerComponent card) =>
             {
-                // card.Instance.Root.anchoredPosition = move.nextPosition;
-                // card.Instance.Root.localScale = new Vector2(move.nextScale.x, move.nextScale.y);
+                card.Instance.Root.anchoredPosition = move.nextPosition;
+                card.Instance.Root.localScale = new Vector2(move.nextScale.x, move.nextScale.y);
             }).WithoutBurst().Run();
         }
     }

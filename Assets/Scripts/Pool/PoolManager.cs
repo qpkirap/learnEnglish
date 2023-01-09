@@ -72,7 +72,7 @@ namespace Game.CustomPool
 			return SpawnObject(prefab, Vector3.zero, Quaternion.identity);
 		}
 
-		public GameObject SpawnObject(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent = null)
+		public GameObject SpawnObject(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent = null, bool isActivate = true)
 		{
 			if (!prefabLookup.ContainsKey(prefab))
 			{
@@ -91,7 +91,7 @@ namespace Game.CustomPool
 
 			clone.transform.SetPositionAndRotation(position, rotation);
 			
-			clone.SetActive(true);
+			if (isActivate) clone.SetActive(true);
 			
 			if (parent != null) clone.transform.SetParent(parent, false);
 

@@ -43,8 +43,8 @@ namespace CraftCar.ECS.System
                     {
                         IsScalable = false,
                         IsPaused = false,
-                        TotalTime = 1f,
-                        TimeLeft = 1,
+                        TotalTime = 0.4f,
+                        TimeLeft = 0.4f,
                         Timescale = 1f
                     };
                 

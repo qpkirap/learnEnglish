@@ -4,7 +4,13 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "RootProject"
+        "RootProject",
+        "Unity.Entities",
+        "Unity.Mathematics",
+        "Unity.Entities.Hybrid",
+        "Unity.Burst",
+        "Unity.Transforms",
+        "Unity.Collections"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

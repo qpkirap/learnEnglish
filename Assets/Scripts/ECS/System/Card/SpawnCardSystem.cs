@@ -3,7 +3,9 @@ using CraftCar.ECS.Components;
 using CraftCar.ECS.Components.SpawnData;
 using CraftCar.InitGame.ECS.Config;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
+using static UnityEngine.Screen;
 
 namespace CraftCar.ECS.System.SpawnCard
 {
@@ -55,6 +57,12 @@ namespace CraftCar.ECS.System.SpawnCard
             EntityManager.AddComponentData(cardEntity, randomData);
             
             cardController.Inject(cardEntity, EntityManager);
+
+            var screenCenter = new float2(canvas.root.sizeDelta.x / 2, canvas.root.sizeDelta.y / 2);
+
+            cardController.Root.anchoredPosition = screenCenter;
+            
+            cardController.gameObject.SetActive(true);
         }
 
         private UICanvasController GetCanvas()

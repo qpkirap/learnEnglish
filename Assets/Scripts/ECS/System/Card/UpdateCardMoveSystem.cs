@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace CraftCar.ECS.System.Card
 {
+    [AlwaysUpdateSystem]
     public partial class UpdateCardMoveSystem : SystemBase
     {
         protected override void OnUpdate()
