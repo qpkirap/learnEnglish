@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using CraftCar.ECS.Components;
 using CraftCar.ECS.Components.Tags;
 using Unity.Entities;
@@ -22,11 +21,11 @@ namespace CraftCar.ECS.System
             var ecb = _entityCommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var time = Time.DeltaTime;
             
-            Entities.WithAll<CardTag, InstanceTag, ClickNextButtonTag>()
+            Entities.WithAll<CardTag, InstanceTag, SpiralMoveTag>()
                 .WithNone<CardSpiralMoveParameters>()
                 .ForEach((Entity e,
                     int entityInQueryIndex,
-                    CardMoveData moveData) =>
+                    CardCurrentMoveData moveData) =>
                 {
                     var c1 = new CardSpiralMoveParameters()
                     {
@@ -54,10 +53,10 @@ namespace CraftCar.ECS.System
                 
                 }).ScheduleParallel();
 
-            Entities.WithAll<CardTag, InstanceTag, ClickNextButtonTag>().ForEach((
+            Entities.WithAll<CardTag, InstanceTag, SpiralMoveTag>().ForEach((
                 Entity e,
                 int entityInQueryIndex,
-                ref CardMoveData moveData, 
+                ref CardCurrentMoveData moveData, 
                 ref CardSpiralMoveParameters spiralMoveParameters) =>
             {
                 var nextPosition = GetNextPosition(moveData.currentPosition, spiralMoveParameters.accumulatedTime, spiralMoveParameters.kSpiral);

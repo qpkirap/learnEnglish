@@ -13,7 +13,7 @@ namespace CraftCar.ECS.System.Card
             Entities.WithAll<CardTag, InstanceTag, UICardControllerComponent>().ForEach(
                 (Entity e, UICardControllerComponent card) =>
                 {
-                    var moveData = new CardMoveData()
+                    var moveData = new CardCurrentMoveData()
                     {
                         currentPosition = card.Instance.Root.anchoredPosition,
                         currentLocalScale = (Vector2)card.Instance.Root.localScale

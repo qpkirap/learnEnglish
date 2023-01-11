@@ -1,4 +1,5 @@
 ﻿using System;
+using CraftCar.ECS.Components;
 using CraftCar.ECS.Components.Tags;
 using UniRx;
 using Unity.Entities;
@@ -49,6 +50,7 @@ namespace CraftCar.ECS_UI.Components
             if (entity != Entity.Null)
             {
                 manager.AddComponentData(entity, new ClickNextButtonTag());
+                manager.AddComponentData(entity, new SpiralMoveTag());
             }
         }
 

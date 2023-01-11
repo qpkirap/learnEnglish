@@ -20,7 +20,7 @@ namespace CraftCar.ECS.System.Card
             Entities.WithAll<Timer, CardTag, InstanceTag>().WithNone<DestroyTag>()
                 .ForEach((Entity e, int entityInQueryIndex, Timer timer) =>
             {
-                if(timer.IsCompleted) ecb.AddComponent(entityInQueryIndex, e, new DestroyTag());
+                if (timer.IsCompleted) ecb.AddComponent(entityInQueryIndex, e, new DestroyTag());
             }).ScheduleParallel();
             
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
