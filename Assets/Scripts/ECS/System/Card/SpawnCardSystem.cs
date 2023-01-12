@@ -68,10 +68,10 @@ namespace CraftCar.ECS.System.SpawnCard
             
             cardController.gameObject.SetActive(true);
 
-            EntityManager.AddComponentData(factorysEntity,
+            EntityManager.AddComponentData(cardEntity,
                 new TargetMoveData()
                     { TargetMove = new float2(canvas.root.sizeDelta.x / 2, canvas.root.sizeDelta.y / 2) });
-            EntityManager.AddComponentData(factorysEntity, new LinearMoveTag());
+            EntityManager.AddComponentData(cardEntity, new LinearMoveTag());
         }
 
         private UICanvasController GetCanvas()
@@ -92,15 +92,9 @@ namespace CraftCar.ECS.System.SpawnCard
 
             var screenSize = canvasInstance.root.sizeDelta;
 
-            var y = Random.Range(-screenSize.y / 2, screenSize.y * 2);
-
-            var x = 0f;
+            var y = Random.Range(-screenSize.y / 2, screenSize.y * 1.5f);
             
-            if (y >= 0 && y <= screenSize.y)
-            {
-                x = Random.Range(Random.Range(-screenSize.x / 2, 0), Random.Range(screenSize.x, screenSize.x * 2));
-            }
-            else x = Random.Range(-screenSize.x / 2, screenSize.x * 2);
+            var x = Random.Range(-screenSize.x / 2, screenSize.x * 1.5f);
             
             return new Vector2(x, y);
         }
