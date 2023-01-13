@@ -65,6 +65,7 @@ namespace CraftCar.ECS.System.SpawnCard
             var screenCenter = GetRandomPositionOutScreen();
 
             cardController.Root.anchoredPosition = screenCenter;
+            cardController.Root.localScale = Vector2.zero;
             
             cardController.gameObject.SetActive(true);
 
