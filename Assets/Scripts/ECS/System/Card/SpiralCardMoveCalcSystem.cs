@@ -11,8 +11,7 @@ namespace CraftCar.ECS.System
     public partial class SpiralCardMoveCalcSystem : SystemBase
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
-        private static int random = 1;
-        
+
         protected override void OnCreate()
         {
             Debug.Log("NextCardSystem create");
@@ -28,10 +27,10 @@ namespace CraftCar.ECS.System
                 .WithNone<CardSpiralMoveParameters>()
                 .ForEach((Entity e,
                     int entityInQueryIndex,
-                    CardCurrentMoveData moveData) =>
+                    CardCurrentMoveData moveData,
+                    RandomData randomData) =>
                 {
-                    var roll = random;
-                    random *= -1;
+                    var roll = randomData.random? 1 : -1;
                     
                     var c1 = new CardSpiralMoveParameters()
                     {

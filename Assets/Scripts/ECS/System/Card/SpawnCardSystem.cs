@@ -68,11 +68,13 @@ namespace CraftCar.ECS.System.SpawnCard
             cardController.Root.localScale = Vector2.zero;
             
             cardController.gameObject.SetActive(true);
+            var random = Random.Range(0f, 1f);
 
             EntityManager.AddComponentData(cardEntity,
                 new TargetMoveData()
                     { TargetMove = new float2(canvas.root.sizeDelta.x / 2, canvas.root.sizeDelta.y / 2) });
             EntityManager.AddComponentData(cardEntity, new LinearMoveTag());
+            EntityManager.AddComponentData(cardEntity, new RandomData() { random = random > 0.5f });
         }
 
         private UICanvasController GetCanvas()

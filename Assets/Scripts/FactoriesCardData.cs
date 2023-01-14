@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using CraftCar.ECS_UI.Components;
 using CraftCar.InitGame.GameResources.Base;
-using Cysharp.Threading.Tasks;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using Transform = log4net.Util.Transform;
+using Random = UnityEngine.Random;
 
 namespace CraftCar
 {
@@ -16,7 +14,7 @@ namespace CraftCar
     {
         public List<CardMonoSharedComponent> cardFabrics;
 
-        public Dictionary<Type, CardMonoSharedComponent> cardFabricsDic;
+        public Dictionary<Type, List<CardMonoSharedComponent>> cardFabricsDic;
 
         private static EntityManager manager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -50,7 +48,8 @@ namespace CraftCar
 
                     entities[index] = entity;
                     
-                    if(!cardFabricsDic.ContainsKey(typeCard)) cardFabricsDic.Add(typeCard, cardMono);
+                    if(!cardFabricsDic.ContainsKey(typeCard)) cardFabricsDic.Add(typeCard, new List<CardMonoSharedComponent>(){cardMono});
+                    else cardFabricsDic[typeCard].Add(cardMono);
                 }
             }
 
@@ -64,7 +63,7 @@ namespace CraftCar
             
             if (cardFabricsDic.TryGetValue(type, out var factory))
             {
-                return (T)factory;
+                return (T)factory[Random.Range(0, factory.Count)];
             }
             
             Debug.LogError($"fabric not found {typeof(T).Name}");

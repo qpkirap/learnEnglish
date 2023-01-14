@@ -51,8 +51,11 @@ namespace CraftCar.ECS.System.Card
                      {
                          var next = moveData;
                          var item = GetNextPosition(current.currentPosition, current.currentLocalScale, target.TargetMove, linearData.initDistanceToTarget);
-                         next.nextPosition = item.Item1;
-                         next.nextScale = item.Item2;
+
+                         var checkDistance = math.distance(item.Item1, target.TargetMove);
+                         
+                         next.nextPosition = checkDistance <= 0.7f? target.TargetMove : item.Item1;
+                         next.nextScale = checkDistance <= 0.7f? Vector2.one : item.Item2;
 
                          linearData.accumulatedTime += time;
                          

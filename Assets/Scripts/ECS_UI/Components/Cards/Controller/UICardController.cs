@@ -11,6 +11,7 @@ namespace CraftCar.ECS_UI.Components
     public class UICardController : MonoBehaviour
     {
         [SerializeField] private RectTransform root;
+        [SerializeField] private RectTransform container;
 
         [Header("First language")] 
         [SerializeField] private Text headText1;
@@ -28,6 +29,8 @@ namespace CraftCar.ECS_UI.Components
         private EntityManager manager;
 
         public RectTransform Root => root;
+        
+        public RectTransform Container => container;
         
         public Text HeadText1 => headText1;
 

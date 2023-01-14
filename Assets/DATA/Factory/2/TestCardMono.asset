@@ -9,11 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb1b30c4bdf348e4b1cb4698ae12ecdb, type: 3}
-  m_Name: AddressableGameObject
+  m_Script: {fileID: 11500000, guid: 23d104f44bb541299fab94cfafb590dd, type: 3}
+  m_Name: TestCardMono
   m_EditorClassIdentifier: 
-  goAsset:
-    m_AssetGUID: acfc8f0936744f2489839b8cbe5161cc
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
+  config: {fileID: 11400000, guid: 474627445bced467382539f8ff035a32, type: 2}

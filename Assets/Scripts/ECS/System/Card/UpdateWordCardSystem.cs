@@ -2,6 +2,7 @@
 using CraftCar.ECS.Components;
 using CraftCar.ECS.Components.SpawnData;
 using Unity.Entities;
+using UnityEngine.UI;
 
 namespace CraftCar.ECS.System
 {
@@ -13,6 +14,8 @@ namespace CraftCar.ECS.System
             {
                 uiCard.uiCardInstance.DescText1.text = word.ru.Value;
                 uiCard.uiCardInstance.DescText2.text = word.en.Value;
+                
+                LayoutRebuilder.ForceRebuildLayoutImmediate(uiCard.uiCardInstance.Container);
             }).WithoutBurst().Run();
         }
     }
