@@ -6,5 +6,6 @@ namespace CraftCar.ECS.Components
     {
         public float accumulatedTime;
         public float kSpiral;
+        public int random;
     }
 }

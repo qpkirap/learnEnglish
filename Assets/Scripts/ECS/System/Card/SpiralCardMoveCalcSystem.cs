@@ -1,14 +1,17 @@
 using CraftCar.ECS.Components;
 using CraftCar.ECS.Components.Tags;
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace CraftCar.ECS.System
 {
     public partial class SpiralCardMoveCalcSystem : SystemBase
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
+        private static int random = 1;
         
         protected override void OnCreate()
         {
@@ -27,10 +30,14 @@ namespace CraftCar.ECS.System
                     int entityInQueryIndex,
                     CardCurrentMoveData moveData) =>
                 {
+                    var roll = random;
+                    random *= -1;
+                    
                     var c1 = new CardSpiralMoveParameters()
                     {
                         accumulatedTime = 0,
-                        kSpiral = 0
+                        kSpiral = 0,
+                        random = roll
                     };
                     var c2 = new CardMoveProcess()
                     {
@@ -59,7 +66,8 @@ namespace CraftCar.ECS.System
                 ref CardCurrentMoveData moveData, 
                 ref CardSpiralMoveParameters spiralMoveParameters) =>
             {
-                var nextPosition = GetNextPosition(moveData.currentPosition, spiralMoveParameters.accumulatedTime, spiralMoveParameters.kSpiral);
+                var nextPosition = GetNextPosition(moveData.currentPosition, spiralMoveParameters.accumulatedTime, 
+                    spiralMoveParameters.kSpiral * spiralMoveParameters.random);
                 var nextScale = GetNextScale(moveData.currentLocalScale, spiralMoveParameters.accumulatedTime);
                 
                 var rMax = 100;
@@ -83,13 +91,13 @@ namespace CraftCar.ECS.System
 
         private static float2 GetNextPosition(float2 currentPosition, float accumulatedTime, float k)
         {
-            float radius = 50f;
+            float radius = 50;
             float rotationSpeed = 0.2f;
             
             float angle = accumulatedTime * rotationSpeed;
-
-            float x = -k * radius * Mathf.Cos(math.degrees(angle));
-            float y = -k * radius * Mathf.Sin(math.degrees(angle));
+            
+            float x = k * radius * Mathf.Cos(math.degrees(angle));
+            float y = k * radius * Mathf.Sin(math.degrees(angle));
 
             return new float2(x, y) + currentPosition;
         }
