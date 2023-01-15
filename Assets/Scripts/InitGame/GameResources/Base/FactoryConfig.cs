@@ -7,7 +7,6 @@ using Cysharp.Threading.Tasks;
 using Game.CustomPool;
 using Unity.Entities;
 using UnityEngine;
-using Transform = log4net.Util.Transform;
 
 namespace CraftCar.InitGame.GameResources.Base
 {
