@@ -32,7 +32,7 @@ namespace CraftCar
 
         public NativeArray<Entity> InitAllFabrics()
         {
-            NativeArray<Entity> entities = new NativeArray<Entity>(cardFabrics.Count, Allocator.Temp);
+            NativeArray<Entity> entities = new NativeArray<Entity>(cardFabrics.Count, Allocator.Persistent);
 
             if (cardFabrics != null)
             {

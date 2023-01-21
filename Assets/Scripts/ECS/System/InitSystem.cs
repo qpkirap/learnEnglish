@@ -1,5 +1,4 @@
 ﻿using CraftCar.ECS.Components.Tags;
-using CraftCar.InitGame.ECS.Config;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Scenes;
@@ -32,27 +31,30 @@ namespace CraftCar.ECS.System
         protected override void OnUpdate()
         {
             if (IsInit) return;
-            
-            InitCardFabrics();
-            
-            if (!sceneSystem.IsSceneLoaded(gameSceneEntity))
-            {
-                LoadGameScene();
 
-                IsInit = true;
+            if (TryInitCardFabrics())
+            {
+                if (!sceneSystem.IsSceneLoaded(gameSceneEntity))
+                {
+                    LoadGameScene();
+
+                    IsInit = true;
+                }
             }
         }
 
-        private void InitCardFabrics()
+        private bool TryInitCardFabrics()
         {
-            if(fabricsCard == null || !fabricsCard.IsCreated) return;
+            if(fabricsCard == null || !fabricsCard.IsCreated) return false;
             
             foreach (var entity in fabricsCard)
             {
-                if(!EntityManager.HasComponent<ReadyPrefabTag>(entity)) return;
+                if(!EntityManager.HasComponent<ReadyPrefabTag>(entity)) return false;
             }
 
             fabricsCard.Dispose();
+
+            return true;
         }
 
         private void LoadGameScene()
