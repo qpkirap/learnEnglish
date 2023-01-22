@@ -8,8 +8,17 @@ namespace CraftCar.ECS.System.Card
     [AlwaysUpdateSystem]
     public partial class UpdateCardMoveSystem : SystemBase
     {
+        private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
+
+        protected override void OnCreate()
+        {
+            _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
+        }
+
         protected override void OnUpdate()
         {
+            var ecb = _entityCommandBufferSystem.CreateCommandBuffer();
+            
             Entities.WithAll<CardTag, InstanceTag, UICardControllerComponent>().ForEach(
                 (Entity e, UICardControllerComponent card) =>
                 {
@@ -19,9 +28,9 @@ namespace CraftCar.ECS.System.Card
                         currentLocalScale = (Vector2)card.Instance.Root.localScale
                     };
                     
-                    EntityManager.AddComponentData(e, moveData);   
+                    ecb.AddComponent(e, moveData);   
                     
-                }).WithStructuralChanges().WithoutBurst().Run();
+                }).WithoutBurst().Run();
         }
     }
 }

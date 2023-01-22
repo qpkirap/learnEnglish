@@ -1,5 +1,5 @@
 using CraftCar.ECS_UI.Components;
-using CraftCar.InitGame.GameResources.Base;
+using LearnEnglish.InitGame.GameResources;
 using Cysharp.Threading.Tasks;
 using Unity.Entities;
 using UnityEngine;

@@ -54,12 +54,10 @@ namespace CraftCar.ECS.System.SpawnCard
             var factorysEntity = GetSingletonEntity<FactoriesCardData>();
             var factories = EntityManager.GetComponentData<FactoriesCardData>(factorysEntity);
 
-            var randomData = dicData.GetRandomData();
+            var randomWordsData = dicData.GetRandomData();
 
             var cardController = factories.CreateCardInstance<TestCardMono>(cardEntity, canvas.root);
 
-            EntityManager.AddComponentData(cardEntity, randomData);
-            
             cardController.Inject(cardEntity, EntityManager);
 
             var screenCenter = GetRandomPositionOutScreen();
@@ -68,8 +66,10 @@ namespace CraftCar.ECS.System.SpawnCard
             cardController.Root.localScale = Vector2.zero;
             
             cardController.gameObject.SetActive(true);
+            
             var random = Random.Range(0f, 1f);
-
+            
+            EntityManager.AddComponentData(cardEntity, randomWordsData);
             EntityManager.AddComponentData(cardEntity,
                 new TargetMoveData()
                     { TargetMove = new float2(canvas.root.sizeDelta.x / 2, canvas.root.sizeDelta.y / 2) });

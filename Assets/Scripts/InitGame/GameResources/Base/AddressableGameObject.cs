@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace CraftCar.InitGame.GameResources.Base
+namespace LearnEnglish.InitGame.GameResources
 {
     [CreateAssetMenu(fileName = "AddressableGameObject", menuName = "Game/Configs/AddressableGameObject")]
     public class AddressableGameObject : ScriptableObject

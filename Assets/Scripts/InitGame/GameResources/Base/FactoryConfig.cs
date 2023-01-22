@@ -8,7 +8,7 @@ using Game.CustomPool;
 using Unity.Entities;
 using UnityEngine;
 
-namespace CraftCar.InitGame.GameResources.Base
+namespace LearnEnglish.InitGame.GameResources
 {
     public abstract class CardMonoSharedComponent<TSharedConfig, TCardController, TConcreteShared> : CardMonoSharedComponent
         where TSharedConfig : EntitySharedComponent
@@ -97,7 +97,6 @@ namespace CraftCar.InitGame.GameResources.Base
         }
     }
     
-
     public abstract class EntitySharedComponent : Component
     {
         public abstract UniTask Init(Entity entity);

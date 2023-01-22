@@ -2,11 +2,12 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Scenes;
+using UnityEngine;
 
 namespace CraftCar.ECS.System
 {
     [AlwaysUpdateSystem]
-    //[UpdateInGroup(typeof(GameObjectDeclareReferencedObjectsGroup))]
+    [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial class InitSystem : SystemBase
     {
         private SceneSystem sceneSystem;
@@ -15,17 +16,19 @@ namespace CraftCar.ECS.System
 
         private NativeArray<Entity> fabricsCard;
 
-        public bool IsInit { get; private set; }
+        private bool IsInit { get; set; }
 
         protected override void OnStartRunning()
         {
+            Application.targetFrameRate = 60;
+            
             sceneSystem = World.GetExistingSystem<SceneSystem>();
             gameSceneEntity = GetSingletonEntity<SceneReference>();
             
-            var factorysEntity = GetSingletonEntity<FactoriesCardData>();
-            var factorysData = EntityManager.GetComponentData<FactoriesCardData>(factorysEntity);
+            var factorySingleton = GetSingletonEntity<FactoriesCardData>();
+            var factoryData = EntityManager.GetComponentData<FactoriesCardData>(factorySingleton);
 
-            fabricsCard = factorysData.InitAllFabrics();
+            fabricsCard = factoryData.InitAllFabrics();
         }
 
         protected override void OnUpdate()
@@ -45,7 +48,7 @@ namespace CraftCar.ECS.System
 
         private bool TryInitCardFabrics()
         {
-            if(fabricsCard == null || !fabricsCard.IsCreated) return false;
+            if (fabricsCard == null || !fabricsCard.IsCreated) return false;
             
             foreach (var entity in fabricsCard)
             {
@@ -65,6 +68,4 @@ namespace CraftCar.ECS.System
                 new SceneSystem.LoadParameters {AutoLoad = false, Flags = SceneLoadFlags.LoadAsGOScene });
         }
     }
-    
-    
 }

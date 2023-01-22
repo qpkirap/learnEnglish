@@ -14,8 +14,7 @@ namespace CraftCar.ECS.System
 
         protected override void OnCreate()
         {
-            Debug.Log("NextCardSystem create");
-            _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
+           _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
@@ -62,6 +61,8 @@ namespace CraftCar.ECS.System
             Entities.WithAll<CardTag, InstanceTag, SpiralMoveTag>().ForEach((
                 Entity e,
                 int entityInQueryIndex,
+                CardMoveProcess cardMoveProcess,
+                Timer timer,
                 ref CardCurrentMoveData moveData, 
                 ref CardSpiralMoveParameters spiralMoveParameters) =>
             {
@@ -73,14 +74,14 @@ namespace CraftCar.ECS.System
                 if (math.abs( spiralMoveParameters.kSpiral - rMax) > 0.01f) spiralMoveParameters.kSpiral +=spiralMoveParameters.accumulatedTime;
                 spiralMoveParameters.accumulatedTime += time * 0.5f;
                 
-                ecb.SetComponent(entityInQueryIndex, e, spiralMoveParameters);
-
+                
                 var newSpiralMove = new CardMoveProcess()
                 {
                     nextPosition = nextPosition,
                     nextScale = nextScale
                 };
                 
+                ecb.SetComponent(entityInQueryIndex, e, spiralMoveParameters);
                 ecb.SetComponent(entityInQueryIndex, e, newSpiralMove);
 
             }).ScheduleParallel();

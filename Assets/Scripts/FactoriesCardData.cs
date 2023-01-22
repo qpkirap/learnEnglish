@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CraftCar.ECS_UI.Components;
-using CraftCar.InitGame.GameResources.Base;
+using LearnEnglish.InitGame.GameResources;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
@@ -48,15 +48,14 @@ namespace CraftCar
 
                     entities[index] = entity;
                     
-                    if(!cardFabricsDic.ContainsKey(typeCard)) cardFabricsDic.Add(typeCard, new List<CardMonoSharedComponent>(){cardMono});
+                    if (!cardFabricsDic.ContainsKey(typeCard)) cardFabricsDic.Add(typeCard, new List<CardMonoSharedComponent>(){cardMono});
                     else cardFabricsDic[typeCard].Add(cardMono);
                 }
             }
 
             return entities;
         }
-        
-      
+
         private T GetFabric<T>() where T : CardMonoSharedComponent
         {
             var type = typeof(T);
@@ -70,6 +69,5 @@ namespace CraftCar
 
             return null;
         }
-        
     }
 }

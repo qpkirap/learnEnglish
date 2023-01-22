@@ -1,6 +1,6 @@
-using CraftCar.InitGame.GameResources.Base;
+using LearnEnglish.InitGame.GameResources;
 using UnityEngine;
-using Component = CraftCar.InitGame.GameResources.Base.Component;
+using Component = LearnEnglish.InitGame.GameResources.Component;
 
 namespace CraftCar.InitGame.ECS.Config
 {

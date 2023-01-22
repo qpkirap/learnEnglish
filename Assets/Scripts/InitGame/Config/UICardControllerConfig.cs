@@ -1,4 +1,4 @@
-using CraftCar.InitGame.GameResources.Base;
+using LearnEnglish.InitGame.GameResources;
 using UnityEngine;
 
 namespace CraftCar.InitGame.ECS.Config
