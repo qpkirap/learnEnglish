@@ -6,7 +6,7 @@ using UnityEngine.PlayerLoop;
 
 namespace CraftCar.ECS.System.Card
 {
-    [UpdateInGroup(typeof(LateSimulationSystemGroup))]
+    [UpdateAfter(typeof(PreDestroyCardTimeSystem))]
     public partial class CardDestroySystem : SystemBase
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
