@@ -1,13 +1,12 @@
 using CraftCar.ECS_UI.Components;
 using CraftCar.ECS.Components.Tags;
+using Game.ECS.System.Base;
 using Game.CustomPool;
 using Unity.Entities;
-using UnityEngine.PlayerLoop;
 
-namespace CraftCar.ECS.System.Card
+namespace Game.ECS.System
 {
-    [UpdateAfter(typeof(PreDestroyCardTimeSystem))]
-    public partial class CardDestroySystem : SystemBase
+    public partial class DestroyCardSystem : DestroySystemBase
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
 
@@ -15,16 +14,16 @@ namespace CraftCar.ECS.System.Card
         {
             _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
         }
-        
+
         protected override void OnUpdate()
         {
             var ecb = _entityCommandBufferSystem.CreateCommandBuffer();
 
-            Entities.WithAll<UICardControllerComponent, DestroyTag>()
+            Entities.WithAll<DestroyTag>()
                 .ForEach((Entity e, UICardControllerComponent card) =>
                 {
                     PoolManager.Instance.ReleaseObject(card.Instance.gameObject);
-                    
+
                     ecb.DestroyEntity(e);
                 }).WithoutBurst().Run();
         }

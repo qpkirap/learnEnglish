@@ -1,11 +1,12 @@
 using CraftCar.ECS_UI.Components;
 using CraftCar.ECS.Components;
+using Game.ECS.System.Base;
 using Unity.Entities;
 using UnityEngine;
 
-namespace CraftCar.ECS.System.Card
+namespace Game.ECS.System
 {
-    public partial class CardMoveProcessSystem : SystemBase
+    public partial class CardMoveProcessSystem : PostMovementSystem
     {
         protected override void OnUpdate()
         {

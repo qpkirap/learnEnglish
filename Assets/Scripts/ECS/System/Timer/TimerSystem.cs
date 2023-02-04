@@ -1,10 +1,11 @@
 using CraftCar.ECS.Components;
+using Game.ECS.System.Base;
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace CraftCar.ECS.System
+namespace Game.ECS.System
 {
-    public partial class TimerSystem : SystemBase
+    public partial class TimerSystem : UpdateSystem
     {
         protected override void OnUpdate()
         {

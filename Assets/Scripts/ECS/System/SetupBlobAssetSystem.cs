@@ -1,12 +1,14 @@
-﻿using CraftCar.Config;
+﻿using CraftCar;
+using CraftCar.Config;
 using CraftCar.ECS.Components.SpawnData;
+using Game.ECS.System.Base;
 using Newtonsoft.Json;
 using Unity.Collections;
 using Unity.Entities;
 
-namespace CraftCar.ECS.System
+namespace Game.ECS.System
 {
-    public partial class SetupBlobAssetSystem : SystemBase
+    public partial class SetupBlobAssetSystem : InitSystemBase
     {
         protected override void OnStartRunning()
         {
@@ -32,7 +34,9 @@ namespace CraftCar.ECS.System
             
             var blobDicEntity = GetSingleton<EntityDicElementsData>();
             blobDicEntity.dicElementsData = blobBuilder.CreateBlobAssetReference<DicElementsData>(Allocator.Persistent);
+            
             SetSingleton(blobDicEntity);
+            
             EntityManager.DestroyEntity(dataEntity);
         }   
 

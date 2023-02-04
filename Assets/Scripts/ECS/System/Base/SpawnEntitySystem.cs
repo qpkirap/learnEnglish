@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace CraftCar.ECS.System.Base
+namespace Game.ECS.System.Base
 {
     public partial class SpawnEntitySystem : SystemBase
     {

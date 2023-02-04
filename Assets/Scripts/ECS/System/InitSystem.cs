@@ -1,71 +1,57 @@
-﻿using CraftCar.ECS.Components.Tags;
-using Unity.Collections;
+﻿using CraftCar;
+using CraftCar.ECS.Components;
+using CraftCar.ECS.Components.Tags;
+using Game.ECS.System.Base;
 using Unity.Entities;
 using Unity.Scenes;
 using UnityEngine;
 
-namespace CraftCar.ECS.System
+namespace Game.ECS.System
 {
-    [AlwaysUpdateSystem]
-    [UpdateInGroup(typeof(SimulationSystemGroup))]
-    public partial class InitSystem : SystemBase
+    public partial class InitSystem : InitSystemBase
     {
-        private SceneSystem sceneSystem;
-        
-        private Entity gameSceneEntity;
-
-        private NativeArray<Entity> fabricsCard;
-
-        private bool IsInit { get; set; }
-
         protected override void OnStartRunning()
         {
             Application.targetFrameRate = 60;
-            
-            sceneSystem = World.GetExistingSystem<SceneSystem>();
-            gameSceneEntity = GetSingletonEntity<SceneReference>();
-            
+
             var factorySingleton = GetSingletonEntity<FactoriesCardData>();
             var factoryData = EntityManager.GetComponentData<FactoriesCardData>(factorySingleton);
 
-            fabricsCard = factoryData.InitAllFabrics();
+            factoryData.InitAllFabrics();
         }
 
         protected override void OnUpdate()
         {
-            if (IsInit) return;
-
-            if (TryInitCardFabrics())
+            if (IsLoadFabrics())
             {
-                if (!sceneSystem.IsSceneLoaded(gameSceneEntity))
+                Entities.WithAll<FactoriesCardData>().WithNone<InitAllFabricsTag>().ForEach((ref Entity e) =>
                 {
-                    LoadGameScene();
+                    EntityManager.AddComponentData(e, new InitAllFabricsTag());
 
-                    IsInit = true;
-                }
+                    LoadGameScene();
+                }).WithStructuralChanges().WithoutBurst().Run();
             }
         }
 
-        private bool TryInitCardFabrics()
+        private bool IsLoadFabrics()
         {
-            if (fabricsCard == null || !fabricsCard.IsCreated) return false;
-            
-            foreach (var entity in fabricsCard)
-            {
-                if(!EntityManager.HasComponent<ReadyPrefabTag>(entity)) return false;
-            }
+            var test = 0;
 
-            fabricsCard.Dispose();
+            Entities.WithAll<Prefab>().WithNone<ReadyPrefabTag>().ForEach((Entity e) => { test--; }).WithoutBurst()
+                .Run();
 
-            return true;
+            return test == 0;
         }
 
         private void LoadGameScene()
         {
+            var sceneSystem = World.GetExistingSystem<SceneSystem>();
+            var gameSceneEntity = GetSingletonEntity<SceneReference>();
+
             var gameSceneEntityData = EntityManager.GetComponentData<SceneReference>(gameSceneEntity);
 
             sceneSystem.LoadSceneAsync(gameSceneEntityData.SceneGUID,
-                new SceneSystem.LoadParameters {AutoLoad = false, Flags = SceneLoadFlags.LoadAsGOScene });
+                new SceneSystem.LoadParameters { AutoLoad = false, Flags = SceneLoadFlags.LoadAsGOScene });
         }
     }
 }

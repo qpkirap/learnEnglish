@@ -30,10 +30,8 @@ namespace CraftCar
             return null;
         }
 
-        public NativeArray<Entity> InitAllFabrics()
+        public void InitAllFabrics()
         {
-            NativeArray<Entity> entities = new NativeArray<Entity>(cardFabrics.Count, Allocator.Persistent);
-
             if (cardFabrics != null)
             {
                 cardFabricsDic ??= new();
@@ -44,16 +42,14 @@ namespace CraftCar
                     var typeCard = cardMono.GetType();
                     var entity = manager.CreateEntity(cardMono.GetSharedType);
 
+                    manager.AddComponentData(entity, new Prefab());
+
                     cardMono.Init(entity);
 
-                    entities[index] = entity;
-                    
                     if (!cardFabricsDic.ContainsKey(typeCard)) cardFabricsDic.Add(typeCard, new List<CardMonoSharedComponent>(){cardMono});
                     else cardFabricsDic[typeCard].Add(cardMono);
                 }
             }
-
-            return entities;
         }
 
         private T GetFabric<T>() where T : CardMonoSharedComponent

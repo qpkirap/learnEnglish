@@ -1,27 +1,25 @@
 using CraftCar.ECS.Components;
-using CraftCar.ECS.Components.Tags;
-using Unity.Burst;
+using Game.ECS.System.Base;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-namespace CraftCar.ECS.System
+namespace Game.ECS.System
 {
-    public partial class SpiralCardMoveCalcSystem : SystemBase
+    public partial class SpiralCardMoveCalcSystem : MovementSystem
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
 
         protected override void OnCreate()
         {
-           _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
+            _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
         {
             var ecb = _entityCommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var time = Time.DeltaTime;
-            
+
             Entities.WithAll<CardTag, InstanceTag, SpiralMoveTag>()
                 .WithNone<CardSpiralMoveParameters>()
                 .ForEach((Entity e,
@@ -29,8 +27,8 @@ namespace CraftCar.ECS.System
                     CardCurrentMoveData moveData,
                     RandomData randomData) =>
                 {
-                    var roll = randomData.random? 1 : -1;
-                    
+                    var roll = randomData.random ? 1 : -1;
+
                     var c1 = new CardSpiralMoveParameters()
                     {
                         accumulatedTime = 0,
@@ -51,41 +49,33 @@ namespace CraftCar.ECS.System
                         TimeLeft = 0.4f,
                         Timescale = 1f
                     };
-                
+
                     ecb.AddComponent(entityInQueryIndex, e, timer);
                     ecb.AddComponent(entityInQueryIndex, e, c1);
                     ecb.AddComponent(entityInQueryIndex, e, c2);
-                
                 }).ScheduleParallel();
 
-            Entities.WithAll<CardTag, InstanceTag, SpiralMoveTag>().ForEach((
+            Entities.WithAll<CardSpiralMoveParameters, InstanceTag, SpiralMoveTag>().ForEach((
                 Entity e,
                 int entityInQueryIndex,
-                CardMoveProcess cardMoveProcess,
-                Timer timer,
-                ref CardCurrentMoveData moveData, 
-                ref CardSpiralMoveParameters spiralMoveParameters) =>
+                CardCurrentMoveData moveData,
+                ref CardSpiralMoveParameters spiralMoveParameters,
+                ref CardMoveProcess cardMoveProcess) =>
             {
-                var nextPosition = GetNextPosition(moveData.currentPosition, spiralMoveParameters.accumulatedTime, 
+                var nextPosition = GetNextPosition(moveData.currentPosition, spiralMoveParameters.accumulatedTime,
                     spiralMoveParameters.kSpiral * spiralMoveParameters.random);
                 var nextScale = GetNextScale(moveData.currentLocalScale, spiralMoveParameters.accumulatedTime);
-                
-                var rMax = 100;
-                if (math.abs( spiralMoveParameters.kSpiral - rMax) > 0.01f) spiralMoveParameters.kSpiral +=spiralMoveParameters.accumulatedTime;
-                spiralMoveParameters.accumulatedTime += time * 0.5f;
-                
-                
-                var newSpiralMove = new CardMoveProcess()
-                {
-                    nextPosition = nextPosition,
-                    nextScale = nextScale
-                };
-                
-                ecb.SetComponent(entityInQueryIndex, e, spiralMoveParameters);
-                ecb.SetComponent(entityInQueryIndex, e, newSpiralMove);
 
+                var rMax = 100;
+                if (math.abs(spiralMoveParameters.kSpiral - rMax) > 0.01f)
+                    spiralMoveParameters.kSpiral += spiralMoveParameters.accumulatedTime;
+
+                spiralMoveParameters.accumulatedTime += time * 0.5f;
+
+                cardMoveProcess.nextPosition = nextPosition;
+                cardMoveProcess.nextScale = nextScale;
             }).ScheduleParallel();
-            
+
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }
 
@@ -93,9 +83,9 @@ namespace CraftCar.ECS.System
         {
             float radius = 50;
             float rotationSpeed = 0.2f;
-            
+
             float angle = accumulatedTime * rotationSpeed;
-            
+
             float x = k * radius * Mathf.Cos(math.degrees(angle));
             float y = k * radius * Mathf.Sin(math.degrees(angle));
 
@@ -105,7 +95,7 @@ namespace CraftCar.ECS.System
         private static float2 GetNextScale(Vector2 currentScale, float time)
         {
             var newScale = currentScale - Vector2.one * time;
-            
+
             return newScale;
         }
     }

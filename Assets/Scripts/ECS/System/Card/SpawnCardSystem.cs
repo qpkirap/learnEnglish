@@ -1,18 +1,18 @@
-﻿using CraftCar.ECS_UI.Components;
+﻿using CraftCar;
+using CraftCar.ECS_UI.Components;
 using CraftCar.ECS.Components;
 using CraftCar.ECS.Components.SpawnData;
 using CraftCar.ECS.Components.Tags;
+using Game.ECS.System.Base;
 using CraftCar.InitGame.ECS.Config;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using static UnityEngine.Screen;
 using Random = UnityEngine.Random;
 
-namespace CraftCar.ECS.System.SpawnCard
+namespace Game.ECS.System.SpawnCard
 {
-    [AlwaysUpdateSystem]
-    public partial class SpawnCardSystem : SystemBase
+    public partial class SpawnCardSystem : UpdateSystem
     {
         private UICanvasController canvas;
         
@@ -23,7 +23,7 @@ namespace CraftCar.ECS.System.SpawnCard
         
         protected override void OnUpdate()
         {
-            if (!HasSingleton<FactoriesCardData>()) return;
+            if (!HasSingleton<InitAllFabricsTag>()) return;
             if (!HasSingleton<EntityDicElementsData>()) return;
             
             int countCard = 0;
@@ -37,7 +37,6 @@ namespace CraftCar.ECS.System.SpawnCard
             {
                 CreateCard();
             }
-            
         }
 
         private void CreateCard()
@@ -48,13 +47,12 @@ namespace CraftCar.ECS.System.SpawnCard
 
             var dicData = GetSingleton<EntityDicElementsData>();
                 
-            var cardEntity = EntityManager.CreateEntity(typeof(CardTag));
-            EntityManager.AddComponentData(cardEntity, new CardTag());
-                
             var factorysEntity = GetSingletonEntity<FactoriesCardData>();
             var factories = EntityManager.GetComponentData<FactoriesCardData>(factorysEntity);
-
             var randomWordsData = dicData.GetRandomData();
+            
+            var cardEntity = EntityManager.CreateEntity(typeof(CardTag));
+            EntityManager.AddComponentData(cardEntity, new CardTag());
 
             var cardController = factories.CreateCardInstance<TestCardMono>(cardEntity, canvas.root);
 

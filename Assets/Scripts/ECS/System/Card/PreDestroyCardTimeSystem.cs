@@ -1,10 +1,11 @@
 using CraftCar.ECS.Components;
 using CraftCar.ECS.Components.Tags;
+using Game.ECS.System.Base;
 using Unity.Entities;
 
-namespace CraftCar.ECS.System.Card
+namespace Game.ECS.System
 {
-    public partial class PreDestroyCardTimeSystem : SystemBase
+    public partial class PreDestroyCardTimeSystem : PreDestroySystem
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
         
@@ -17,7 +18,7 @@ namespace CraftCar.ECS.System.Card
         {
             var ecb = _entityCommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             
-            Entities.WithAll<Timer, CardTag, InstanceTag>().WithNone<DestroyTag>()
+            Entities.WithAll<Timer>().WithNone<DestroyTag>()
                 .ForEach((Entity e, int entityInQueryIndex, Timer timer) =>
             {
                 if (timer.IsCompleted) ecb.AddComponent(entityInQueryIndex, e, new DestroyTag());
