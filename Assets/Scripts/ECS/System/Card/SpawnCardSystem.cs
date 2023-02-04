@@ -15,7 +15,7 @@ namespace Game.ECS.System.SpawnCard
     public partial class SpawnCardSystem : UpdateSystem
     {
         private UICanvasController canvas;
-        
+
         protected override void OnCreate()
         {
             Debug.Log("SpawnCardSystem create");
@@ -35,44 +35,40 @@ namespace Game.ECS.System.SpawnCard
 
             if (countCard == 0)
             {
-                CreateCard();
+                var canvas = GetCanvas();
+                
+                if (canvas == null) return;
+
+                Entities.WithAll<FactoriesCardData>().ForEach((FactoriesCardData factories) =>
+                {
+                    var dicData = GetSingleton<EntityDicElementsData>();
+                    
+                    var randomWordsData = dicData.GetRandomData();
+            
+                    var cardEntity = EntityManager.CreateEntity(typeof(CardTag));
+                    EntityManager.AddComponentData(cardEntity, new CardTag());
+
+                    var cardController = factories.CreateCardInstance<TestCardMono>(cardEntity, canvas.root);
+
+                    cardController.Inject(cardEntity, EntityManager);
+
+                    var screenCenter = GetRandomPositionOutScreen();
+
+                    cardController.Root.anchoredPosition = screenCenter;
+                    cardController.Root.localScale = Vector2.zero;
+            
+                    cardController.gameObject.SetActive(true);
+            
+                    var random = Random.Range(0f, 1f);
+            
+                    EntityManager.AddComponentData(cardEntity, randomWordsData);
+                    EntityManager.AddComponentData(cardEntity,
+                        new TargetMoveData()
+                            { TargetMove = new float2(canvas.root.sizeDelta.x / 2, canvas.root.sizeDelta.y / 2) });
+                    EntityManager.AddComponentData(cardEntity, new LinearMoveTag());
+                    EntityManager.AddComponentData(cardEntity, new RandomData() { random = random > 0.5f });
+                }).WithStructuralChanges().WithoutBurst().Run();
             }
-        }
-
-        private void CreateCard()
-        {
-            var canvas = GetCanvas();
-                
-            if (canvas == null) return;
-
-            var dicData = GetSingleton<EntityDicElementsData>();
-                
-            var factorysEntity = GetSingletonEntity<FactoriesCardData>();
-            var factories = EntityManager.GetComponentData<FactoriesCardData>(factorysEntity);
-            var randomWordsData = dicData.GetRandomData();
-            
-            var cardEntity = EntityManager.CreateEntity(typeof(CardTag));
-            EntityManager.AddComponentData(cardEntity, new CardTag());
-
-            var cardController = factories.CreateCardInstance<TestCardMono>(cardEntity, canvas.root);
-
-            cardController.Inject(cardEntity, EntityManager);
-
-            var screenCenter = GetRandomPositionOutScreen();
-
-            cardController.Root.anchoredPosition = screenCenter;
-            cardController.Root.localScale = Vector2.zero;
-            
-            cardController.gameObject.SetActive(true);
-            
-            var random = Random.Range(0f, 1f);
-            
-            EntityManager.AddComponentData(cardEntity, randomWordsData);
-            EntityManager.AddComponentData(cardEntity,
-                new TargetMoveData()
-                    { TargetMove = new float2(canvas.root.sizeDelta.x / 2, canvas.root.sizeDelta.y / 2) });
-            EntityManager.AddComponentData(cardEntity, new LinearMoveTag());
-            EntityManager.AddComponentData(cardEntity, new RandomData() { random = random > 0.5f });
         }
 
         private UICanvasController GetCanvas()

@@ -18,7 +18,7 @@ namespace CraftCar
 
         private static EntityManager manager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        public UICardController CreateCardInstance<T>(Entity entity, RectTransform parent = null) where T :CardMonoSharedComponent
+        public UICardController CreateCardInstance<T>(Entity entity, RectTransform parent = null) where T : CardMonoSharedComponent
         {
             var needFabrics = GetFabric<T>();
 

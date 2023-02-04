@@ -11,6 +11,11 @@ namespace Game.ECS.System
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
 
+        private const float minCardSpeed = 20f;
+        private const float maxCardSpeed = 100f;
+        private const float scaleSpeed = 0.3f;
+        
+
         protected override void OnCreate()
         {
             _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
@@ -66,30 +71,38 @@ namespace Game.ECS.System
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }
 
+        /// <summary>
+        /// Position, Scale
+        /// </summary>
+        /// <param name="currentPosition"></param>
+        /// <param name="currentScale"></param>
+        /// <param name="target"></param>
+        /// <param name="initDistance"></param>
+        /// <returns></returns>
         private static (float2, float2) GetNextPosition(float2 currentPosition, float2 currentScale, float2 target,
             float initDistance)
         {
             var distance = math.distance(target, currentPosition);
 
-            var checkSpeed = math.clamp(distance / 10, 20, 100);
+            var checkSpeed = math.clamp(distance / 10, minCardSpeed, maxCardSpeed);
 
             var normalize = math.normalize(target - currentPosition);
 
             if (distance <= 10)
             {
-                return (currentPosition + normalize * distance / 3, GetNextScale(distance, 0.1f, initDistance));
+                return (currentPosition + normalize * distance / 3, GetNextScale(distance, scaleSpeed, initDistance));
             }
 
             if (distance <= 3)
             {
-                return (currentPosition + normalize * distance, GetNextScale(distance, 0.1f, initDistance));
+                return (currentPosition + normalize * distance, GetNextScale(distance, scaleSpeed, initDistance));
             }
 
-            return (normalize * checkSpeed + currentPosition, GetNextScale(distance, 0.1f, initDistance));
+            return (normalize * checkSpeed + currentPosition, GetNextScale(distance, scaleSpeed, initDistance));
 
-            float2 GetNextScale(float currentDistance, float minDistance, float startDistance)
+            float2 GetNextScale(float currentDistance, float scaleSpeed, float startDistance)
             {
-                var x = math.clamp(startDistance * minDistance / currentDistance, 0, 1);
+                var x = math.clamp(startDistance * math.clamp(scaleSpeed, 0.1f, 1) / currentDistance, 0, 1);
 
                 return new Vector2(x, x);
             }

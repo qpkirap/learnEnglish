@@ -10,8 +10,17 @@ namespace Game.ECS.System
 {
     public partial class SetupBlobAssetSystem : InitSystemBase
     {
+        private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
+        
+        protected override void OnCreate()
+        {
+            _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
+        }
+        
         protected override void OnStartRunning()
         {
+            var ecb = _entityCommandBufferSystem.CreateCommandBuffer();
+
             var dataEntity = GetSingletonEntity<DicLoadTest>();
             var data = EntityManager.GetComponentData<DicLoadTest>(dataEntity);
             
@@ -37,7 +46,7 @@ namespace Game.ECS.System
             
             SetSingleton(blobDicEntity);
             
-            EntityManager.DestroyEntity(dataEntity);
+            ecb.DestroyEntity(dataEntity);
         }   
 
 

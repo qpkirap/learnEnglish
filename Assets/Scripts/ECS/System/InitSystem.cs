@@ -22,7 +22,7 @@ namespace Game.ECS.System
 
         protected override void OnUpdate()
         {
-            if (IsLoadFabrics())
+            if (!HasSingleton<InitAllFabricsTag>() && IsLoadFabrics())
             {
                 Entities.WithAll<FactoriesCardData>().WithNone<InitAllFabricsTag>().ForEach((ref Entity e) =>
                 {
