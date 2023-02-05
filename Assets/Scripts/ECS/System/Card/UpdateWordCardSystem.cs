@@ -1,7 +1,7 @@
 ﻿using CraftCar.ECS_UI.Components;
 using CraftCar.ECS.Components;
 using CraftCar.ECS.Components.SpawnData;
-using CraftCar.ECS.Components.Tags;
+using Game.ECS.Components;
 using Game.ECS.System.Base;
 using Unity.Entities;
 using UnityEngine.UI;
@@ -28,7 +28,7 @@ namespace Game.ECS.System
 
                 ecb.AddComponent(entity, new UpdateWordCardTag());
 
-                LayoutRebuilder.ForceRebuildLayoutImmediate(uiCard.uiCardInstance.Container);
+                //LayoutRebuilder.ForceRebuildLayoutImmediate(uiCard.uiCardInstance.Container);
                 
             }).WithStructuralChanges().WithoutBurst().Run();
         }

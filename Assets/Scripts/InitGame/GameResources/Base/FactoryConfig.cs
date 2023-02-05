@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using CraftCar.ECS_UI.Components;
 using CraftCar.ECS.Components;
-using CraftCar.ECS.Components.Tags;
+using Game.ECS.Components;
 using Cysharp.Threading.Tasks;
 using Game.CustomPool;
 using Unity.Entities;

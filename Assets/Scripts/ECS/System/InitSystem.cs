@@ -1,6 +1,6 @@
 ﻿using CraftCar;
 using CraftCar.ECS.Components;
-using CraftCar.ECS.Components.Tags;
+using Game.ECS.Components;
 using Game.ECS.System.Base;
 using Unity.Entities;
 using Unity.Scenes;

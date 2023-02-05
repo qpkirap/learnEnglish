@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace CraftCar.ECS.Components.Tags
+namespace Game.ECS.Components
 {
     public struct LinearMoveTag : IComponentData
     {

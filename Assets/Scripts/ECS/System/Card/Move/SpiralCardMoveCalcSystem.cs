@@ -40,17 +40,7 @@ namespace Game.ECS.System
                         nextPosition = moveData.currentPosition,
                         nextScale = moveData.currentLocalScale
                     };
-
-                    var timer = new Timer()
-                    {
-                        IsScalable = false,
-                        IsPaused = false,
-                        TotalTime = 0.4f,
-                        TimeLeft = 0.4f,
-                        Timescale = 1f
-                    };
-
-                    ecb.AddComponent(entityInQueryIndex, e, timer);
+                    
                     ecb.AddComponent(entityInQueryIndex, e, c1);
                     ecb.AddComponent(entityInQueryIndex, e, c2);
                 }).ScheduleParallel();
