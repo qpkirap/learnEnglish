@@ -12,7 +12,7 @@ namespace Game.ECS.System
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
         
-        private const float moveSpeed = 110f;
+        private const float moveTime = 2f;
         private ref readonly TimeData Time => ref World.Time;
 
 
@@ -24,7 +24,7 @@ namespace Game.ECS.System
         protected override void OnUpdate()
         {
             var ecb = _entityCommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
-            var time = Time.DeltaTime;
+            var deltaTime = Time.DeltaTime;
            
             //start move
             Entities.WithAll<LinearMoveTag, CardCurrentMoveData>().WithNone<CardMoveProcess>().ForEach(
@@ -38,7 +38,7 @@ namespace Game.ECS.System
 
                     ecb.AddComponent(entityInQueryIndex, e, linearData);
                     ecb.AddComponent(entityInQueryIndex, e,
-                        new LinearMoveData() { accumulatedTime = time, initDistanceToTarget = distance });
+                        new LinearMoveData() { accumulatedTime = deltaTime, initDistanceToTarget = distance });
                 }).ScheduleParallel();
 
             //move
@@ -61,29 +61,30 @@ namespace Game.ECS.System
                         moveData.nextScale = Vector2.one;
 
                         linearData.isPreLastMove = true;
-                        linearData.accumulatedTime += time;
+                        linearData.accumulatedTime += deltaTime;
                     }
                     else
                     {
                         moveData.nextPosition = item.Item1;
                         moveData.nextScale = item.Item2;
 
-                        linearData.accumulatedTime += time;
+                        linearData.accumulatedTime += deltaTime;
                     }
 
                     (float2, float2, float) GetNextPosition(
                         float2 currentPosition,
-                        float2 target,
+                        float2 target1,
                         float initDistance,
                         float accumulatedTime)
                     {
                         //TODO учесть бла время кадра? но как если выполняется паралллельно
-                        
-                        var direction = math.normalize(target - currentPosition);
 
-                        var calcPosition = moveSpeed * accumulatedTime * direction + currentPosition;
+                        var time = accumulatedTime / moveTime;
+                        time = math.clamp(time, 0, 1);
+
+                        var calcPosition = math.lerp(currentPosition, target1, time);
                         
-                        var distanceRemainder = math.distance(target, currentPosition);
+                        var distanceRemainder = math.distance(target1, currentPosition);
 
                         var percentMove = distanceRemainder / initDistance * 100;
 
