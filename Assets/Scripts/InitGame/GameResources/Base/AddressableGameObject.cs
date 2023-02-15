@@ -37,6 +37,7 @@ namespace LearnEnglish.InitGame.GameResources
             if (goAsset == null || !goAsset.RuntimeKeyIsValid())
             {
                 Debug.LogError($"ключ не валиден {goAsset}");
+                
                 return null;
             }
             

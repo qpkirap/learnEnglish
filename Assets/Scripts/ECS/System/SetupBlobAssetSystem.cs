@@ -48,8 +48,7 @@ namespace Game.ECS.System
             
             ecb.DestroyEntity(dataEntity);
         }   
-
-
+        
         protected override void OnUpdate()
         {
         }

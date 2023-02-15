@@ -54,7 +54,7 @@ namespace CraftCar.ECS_UI.Components
             {
                 manager.AddComponentData(entity, new ClickNextButtonTag());
                 manager.AddComponentData(entity, new SpiralMoveTag());
-                manager.AddComponentData(entity, new PreDestroyTag());
+                //manager.AddComponentData(entity, new PreDestroyTag());
             }
         }
 

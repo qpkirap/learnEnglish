@@ -10,6 +10,8 @@ namespace Game.ECS.System
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
 
+        private const float speedScaleRadius = 100;
+
         protected override void OnCreate()
         {
             _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
@@ -54,13 +56,11 @@ namespace Game.ECS.System
             {
                 var nextPosition = GetNextPosition(moveData.currentPosition, spiralMoveParameters.accumulatedTime,
                     spiralMoveParameters.kSpiral * spiralMoveParameters.random);
-                var nextScale = GetNextScale(moveData.currentLocalScale, spiralMoveParameters.accumulatedTime);
+                var nextScale = GetNextScale(moveData.currentLocalScale, time);
 
-                var rMax = 100;
-                if (math.abs(spiralMoveParameters.kSpiral - rMax) > 0.01f)
-                    spiralMoveParameters.kSpiral += spiralMoveParameters.accumulatedTime;
+                spiralMoveParameters.kSpiral += time * speedScaleRadius;
 
-                spiralMoveParameters.accumulatedTime += time * 0.5f;
+                spiralMoveParameters.accumulatedTime += time;
 
                 cardMoveProcess.nextPosition = nextPosition;
                 cardMoveProcess.nextScale = nextScale;
@@ -69,15 +69,14 @@ namespace Game.ECS.System
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }
 
-        private static float2 GetNextPosition(float2 currentPosition, float accumulatedTime, float k)
+        private static float2 GetNextPosition(float2 currentPosition, float accumulatedTime, float kSpiral)
         {
-            float radius = 50;
             float rotationSpeed = 0.2f;
 
             float angle = accumulatedTime * rotationSpeed;
 
-            float x = k * radius * Mathf.Cos(math.degrees(angle));
-            float y = k * radius * Mathf.Sin(math.degrees(angle));
+            float x = kSpiral * Mathf.Cos(math.degrees(angle));
+            float y = kSpiral * Mathf.Sin(math.degrees(angle));
 
             return new float2(x, y) + currentPosition;
         }

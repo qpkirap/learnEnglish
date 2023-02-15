@@ -1,7 +1,6 @@
 using CraftCar.ECS.Components;
 using Game.ECS.Components;
 using Game.ECS.System.Base;
-using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -12,8 +11,7 @@ namespace Game.ECS.System
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
         
-        private const float moveTime = 2f;
-        private ref readonly TimeData Time => ref World.Time;
+        private const float moveSpeed = 2f;
 
 
         protected override void OnCreate()
@@ -71,15 +69,14 @@ namespace Game.ECS.System
                         linearData.accumulatedTime += deltaTime;
                     }
 
+                    //calc next position and scale
                     (float2, float2, float) GetNextPosition(
                         float2 currentPosition,
                         float2 target1,
                         float initDistance,
                         float accumulatedTime)
                     {
-                        //TODO учесть бла время кадра? но как если выполняется паралллельно
-
-                        var time = accumulatedTime / moveTime;
+                        var time = accumulatedTime / moveSpeed;
                         time = math.clamp(time, 0, 1);
 
                         var calcPosition = math.lerp(currentPosition, target1, time);

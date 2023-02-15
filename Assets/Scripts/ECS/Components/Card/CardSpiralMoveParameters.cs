@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace CraftCar.ECS.Components
 {
@@ -6,6 +7,7 @@ namespace CraftCar.ECS.Components
     {
         public float accumulatedTime;
         public float kSpiral;
+        public quaternion currentRotation;
         public int random;
     }
 }
