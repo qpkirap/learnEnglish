@@ -14,6 +14,7 @@ namespace Game.ECS.System
             {
                 card.Instance.Root.anchoredPosition = move.nextPosition;
                 card.Instance.Root.localScale = new Vector2(move.nextScale.x, move.nextScale.y);
+               // card.Instance.Root.localRotation = move.nextLocalRotation;
             }).WithoutBurst().Run();
         }
     }
