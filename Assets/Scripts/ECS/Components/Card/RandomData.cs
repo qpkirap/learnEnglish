@@ -1,9 +1,9 @@
 using Unity.Entities;
 
-namespace CraftCar.ECS.Components
+namespace Game.ECS.Components
 {
     public struct RandomData : IComponentData
     {
-        public bool random;
+        public bool Random;
     }
 }

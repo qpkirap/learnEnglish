@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace CraftCar.ECS_UI.Components
+namespace Game.ECS_UI.Components
 {
     public interface ICardInstance : ISharedComponentData
     {

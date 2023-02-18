@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace LearnEnglish.InitGame.GameResources
+namespace Game.Config
 {
     [CreateAssetMenu(fileName = "AddressableGameObject", menuName = "Game/Configs/AddressableGameObject")]
     public class AddressableGameObject : ScriptableObject
@@ -36,7 +36,7 @@ namespace LearnEnglish.InitGame.GameResources
             
             if (goAsset == null || !goAsset.RuntimeKeyIsValid())
             {
-                Debug.LogError($"ключ не валиден {goAsset}");
+                Debug.LogError($"key not valid {goAsset}");
                 
                 return null;
             }
@@ -55,7 +55,7 @@ namespace LearnEnglish.InitGame.GameResources
             }
             else
             {
-                Debug.LogError($"Не удалось загрузить adressable key={goAsset}");
+                Debug.LogError($"Failed to load adressable key={goAsset}");
             }
 
             IsReady = true;

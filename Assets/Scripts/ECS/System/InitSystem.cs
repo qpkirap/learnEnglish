@@ -1,7 +1,5 @@
-﻿using CraftCar;
-using CraftCar.ECS.Components;
+﻿using Game;
 using Game.ECS.Components;
-using Game.ECS.System.Base;
 using Unity.Entities;
 using Unity.Scenes;
 using UnityEngine;

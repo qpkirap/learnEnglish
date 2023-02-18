@@ -1,12 +1,7 @@
 using Unity.Entities;
 
-namespace Game.ECS.System.Base
+namespace Game.ECS.System
 {
-    public class GroupSystemUpdate
-    {
-        
-    }
-
     public abstract partial class InitSystemBase : SystemBase
     {
     }
@@ -40,5 +35,4 @@ namespace Game.ECS.System.Base
     public abstract partial class DestroySystemBase : SystemBase
     {
     }
-    
 }

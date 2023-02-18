@@ -1,7 +1,5 @@
-﻿using CraftCar;
-using CraftCar.Config;
-using CraftCar.ECS.Components.SpawnData;
-using Game.ECS.System.Base;
+﻿using Game.Config;
+using Game.ECS.Components;
 using Newtonsoft.Json;
 using Unity.Collections;
 using Unity.Entities;
@@ -28,7 +26,7 @@ namespace Game.ECS.System
             
             using var blobBuilder = new BlobBuilder(Allocator.Temp);
             ref var dicElementsBlobAsset = ref blobBuilder.ConstructRoot<DicElementsData>();
-            var elementArrayBlob = blobBuilder.Allocate(ref dicElementsBlobAsset.dataArray, loadText._dataArrays.Length);
+            var elementArrayBlob = blobBuilder.Allocate(ref dicElementsBlobAsset.DataArray, loadText._dataArrays.Length);
 
             for (int i = 0; i < loadText._dataArrays.Length; i++)
             {
@@ -42,7 +40,7 @@ namespace Game.ECS.System
             }
             
             var blobDicEntity = GetSingleton<EntityDicElementsData>();
-            blobDicEntity.dicElementsData = blobBuilder.CreateBlobAssetReference<DicElementsData>(Allocator.Persistent);
+            blobDicEntity.DicElementsData = blobBuilder.CreateBlobAssetReference<DicElementsData>(Allocator.Persistent);
             
             SetSingleton(blobDicEntity);
             

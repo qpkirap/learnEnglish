@@ -1,7 +1,7 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
 
-namespace CraftCar.ECS.Components.SpawnData
+namespace Game.ECS.Components
 {
     public struct SpawnData: IComponentData
     {

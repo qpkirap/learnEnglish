@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CraftCar.Config
+namespace Game.Config
 {
     [CreateAssetMenu(menuName = "LEARN/Configs/DicJsonConfigAsset", fileName = "DicJsonConfigAsset")]
 

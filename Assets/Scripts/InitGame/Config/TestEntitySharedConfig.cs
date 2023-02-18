@@ -1,10 +1,8 @@
-using CraftCar.ECS_UI.Components;
-using LearnEnglish.InitGame.GameResources;
+using Game.ECS_UI.Components;
 using Cysharp.Threading.Tasks;
-using Unity.Entities;
 using UnityEngine;
 
-namespace CraftCar.InitGame.ECS.Config
+namespace Game.Config
 {
     [CreateAssetMenu(fileName = "TestEntitySharedConfig", menuName = "Game/Configs/FabricsComponent/Shared/TestEntitySharedConfig")]
     public class TestEntitySharedConfig : EntitySharedComponent<UICardControllerComponent>
@@ -19,11 +17,6 @@ namespace CraftCar.InitGame.ECS.Config
             {
                 if (go.TryGetComponent<UICardController>(out UICardController uiCardController))
                 {
-                    //var instance = Instantiate(uiCardController);
-                    //instance.Root.localScale = Vector3.one;
-                    //instance.Root.sizeDelta = Vector2.zero;
-                    //instance.Root.position = Vector3.zero;
-
                     return new(uiCardInstance: uiCardController);
                 }
             }

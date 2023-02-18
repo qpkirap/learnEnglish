@@ -1,7 +1,6 @@
-using LearnEnglish.InitGame.GameResources;
 using UnityEngine;
 
-namespace CraftCar.InitGame.ECS.Config
+namespace Game.Config
 {
     [CreateAssetMenu(fileName = "UICardControllerConfig", menuName = "Game/Configs/SharedComponent/UICardControllerConfig")]
     public class UICardControllerConfig : FactoryConfig<UICardConfig>

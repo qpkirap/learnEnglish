@@ -1,5 +1,4 @@
-using CraftCar.ECS.Components;
-using Game.ECS.System.Base;
+using Game.ECS.Components;
 using Unity.Entities;
 using Unity.Mathematics;
 

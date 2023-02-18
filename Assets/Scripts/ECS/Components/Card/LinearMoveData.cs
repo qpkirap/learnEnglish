@@ -1,11 +1,11 @@
 using Unity.Entities;
 
-namespace CraftCar.ECS.Components
+namespace Game.ECS.Components
 {
     public struct LinearMoveData : IComponentData
     {
-        public float accumulatedTime;
-        public float initDistanceToTarget;
-        public bool isPreLastMove;
+        public float AccumulatedTime;
+        public float InitDistanceToTarget;
+        public bool IsPreLastMove;
     }
 }

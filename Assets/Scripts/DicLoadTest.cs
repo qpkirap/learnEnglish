@@ -1,7 +1,7 @@
-﻿using CraftCar.Config;
+﻿using Game.Config;
 using Unity.Entities;
 
-namespace CraftCar
+namespace Game
 {
     [GenerateAuthoringComponent]
     public class DicLoadTest : IComponentData

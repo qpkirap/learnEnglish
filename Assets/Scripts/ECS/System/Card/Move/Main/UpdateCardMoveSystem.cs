@@ -1,5 +1,5 @@
-using CraftCar.ECS_UI.Components;
-using CraftCar.ECS.Components;
+using Game.ECS_UI.Components;
+using Game.ECS.Components;
 using Game.ECS.System.Base;
 using Unity.Entities;
 using UnityEngine;
@@ -15,8 +15,8 @@ namespace Game.ECS.System
                 {
                     var moveData = new CardCurrentMoveData()
                     {
-                        currentPosition = card.Instance.Root.anchoredPosition,
-                        currentLocalScale = (Vector2)card.Instance.Root.localScale
+                        CurrentPosition = card.Instance.Root.anchoredPosition,
+                        CurrentLocalScale = (Vector2)card.Instance.Root.localScale
                     };
                     
                     EntityManager.AddComponentData(e, moveData);   
@@ -26,8 +26,8 @@ namespace Game.ECS.System
             Entities.WithAll<CardCurrentMoveData, InstanceTag, UICardControllerComponent>().ForEach(
                 (Entity e, UICardControllerComponent card, ref CardCurrentMoveData move) =>
                 {
-                    move.currentPosition = card.Instance.Root.anchoredPosition;
-                    move.currentLocalScale = (Vector2)card.Instance.Root.localScale;
+                    move.CurrentPosition = card.Instance.Root.anchoredPosition;
+                    move.CurrentLocalScale = (Vector2)card.Instance.Root.localScale;
                 }).WithStructuralChanges().WithoutBurst().Run();
         }
     }

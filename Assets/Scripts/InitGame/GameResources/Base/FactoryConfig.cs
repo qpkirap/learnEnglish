@@ -1,14 +1,13 @@
 using System;
 using System.Threading;
-using CraftCar.ECS_UI.Components;
-using CraftCar.ECS.Components;
+using Game.ECS_UI.Components;
 using Game.ECS.Components;
 using Cysharp.Threading.Tasks;
 using Game.CustomPool;
 using Unity.Entities;
 using UnityEngine;
 
-namespace LearnEnglish.InitGame.GameResources
+namespace Game.Config
 {
     public abstract class CardMonoSharedComponent<TSharedConfig, TCardController, TConcreteShared> : CardMonoSharedComponent
         where TSharedConfig : EntitySharedComponent

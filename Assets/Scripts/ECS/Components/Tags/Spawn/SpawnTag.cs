@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace CraftCar.ECS.Tags.Spawn
+namespace Game.ECS.Tags.Spawn
 {
     public struct SpawnTag : IComponentData
     {

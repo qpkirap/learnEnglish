@@ -1,5 +1,4 @@
-using CraftCar.ECS.Components;
-using Game.ECS.System.Base;
+using Game.ECS.Components;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,7 +12,7 @@ namespace Game.ECS.System
         private const float SpeedScaleRadius = 100;
         private const float MaxSpiralRadius = 36;
         private const float RotationSpeed = .1f;
-        private const float ScaleSpeed = 1.1f;
+        private const float ScaleSpeed = 1f;
 
         protected override void OnCreate()
         {
@@ -32,7 +31,7 @@ namespace Game.ECS.System
                     CardCurrentMoveData moveData,
                     RandomData randomData) =>
                 {
-                    var roll = randomData.random ? 1 : -1;
+                    var roll = randomData.Random ? 1 : -1;
 
                     var cSpiralMove = new CardSpiralMoveParameters()
                     {
@@ -42,14 +41,12 @@ namespace Game.ECS.System
                     };
                     var cMoveProc = new CardMoveProcess()
                     {
-                        nextPosition = moveData.currentPosition,
-                        nextScale = moveData.currentLocalScale,
-                        nextLocalRotation = quaternion.LookRotation(Vector3.zero, Vector3.up)
+                        NextPosition = moveData.CurrentPosition,
+                        NextScale = moveData.CurrentLocalScale,
                     };
 
                     ecb.AddComponent(entityInQueryIndex, e, cSpiralMove);
                     ecb.AddComponent(entityInQueryIndex, e, cMoveProc);
-                    
                 }).ScheduleParallel();
 
             Entities.WithAll<CardSpiralMoveParameters, InstanceTag, SpiralMoveTag>().ForEach((
@@ -61,17 +58,15 @@ namespace Game.ECS.System
             {
                 var calcSpiral = math.clamp(spiralMoveParameters.KSpiral * spiralMoveParameters.Random,
                     -MaxSpiralRadius, MaxSpiralRadius);
-
-                var nextPosition = GetNextPosition(moveData.currentPosition, spiralMoveParameters.AccumulatedTime,
+                var nextPosition = GetNextPosition(moveData.CurrentPosition, spiralMoveParameters.AccumulatedTime,
                     calcSpiral);
-                var nextScale = GetNextScale(moveData.currentLocalScale, time);
+                var nextScale = GetNextScale(moveData.CurrentLocalScale, time);
 
                 spiralMoveParameters.KSpiral += time * SpeedScaleRadius;
                 spiralMoveParameters.AccumulatedTime += time;
-                
-                cardMoveProcess.nextPosition = nextPosition;
-                cardMoveProcess.nextScale = nextScale;
-                
+
+                cardMoveProcess.NextPosition = nextPosition;
+                cardMoveProcess.NextScale = nextScale;
             }).ScheduleParallel();
 
             EntityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);

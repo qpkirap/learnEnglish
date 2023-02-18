@@ -1,5 +1,5 @@
-using CraftCar.ECS_UI.Components;
-using CraftCar.ECS.Components;
+using Game.ECS_UI.Components;
+using Game.ECS.Components;
 using Game.ECS.System.Base;
 using Unity.Entities;
 using UnityEngine;
@@ -12,8 +12,8 @@ namespace Game.ECS.System
         {
             Entities.WithAll<UICardControllerComponent, CardMoveProcess>().ForEach((Entity e, CardMoveProcess move, UICardControllerComponent card) =>
             {
-                card.Instance.Root.anchoredPosition = move.nextPosition;
-                card.Instance.Root.localScale = new Vector2(move.nextScale.x, move.nextScale.y);
+                card.Instance.Root.anchoredPosition = move.NextPosition;
+                card.Instance.Root.localScale = new Vector2(move.NextScale.x, move.NextScale.y);
                // card.Instance.Root.localRotation = move.nextLocalRotation;
             }).WithoutBurst().Run();
         }

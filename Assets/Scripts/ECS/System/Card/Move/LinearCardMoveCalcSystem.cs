@@ -1,4 +1,4 @@
-using CraftCar.ECS.Components;
+using Game.ECS.Components;
 using Game.ECS.Components;
 using Game.ECS.System.Base;
 using Unity.Entities;
@@ -28,15 +28,15 @@ namespace Game.ECS.System
             Entities.WithAll<LinearMoveTag, CardCurrentMoveData>().WithNone<CardMoveProcess>().ForEach(
                 (Entity e, int entityInQueryIndex, CardCurrentMoveData current, TargetMoveData target) =>
                 {
-                    var distance = math.distance(target.TargetMove, current.currentPosition);
+                    var distance = math.distance(target.TargetMove, current.CurrentPosition);
 
                     var linearData = new CardMoveProcess();
-                    linearData.nextPosition = current.currentPosition;
-                    linearData.nextScale = current.currentLocalScale;
+                    linearData.NextPosition = current.CurrentPosition;
+                    linearData.NextScale = current.CurrentLocalScale;
 
                     ecb.AddComponent(entityInQueryIndex, e, linearData);
                     ecb.AddComponent(entityInQueryIndex, e,
-                        new LinearMoveData() { accumulatedTime = deltaTime, initDistanceToTarget = distance });
+                        new LinearMoveData() { AccumulatedTime = deltaTime, InitDistanceToTarget = distance });
                 }).ScheduleParallel();
 
             //move
@@ -44,10 +44,10 @@ namespace Game.ECS.System
                 (Entity e, int entityInQueryIndex, CardCurrentMoveData current, TargetMoveData target,
                     ref CardMoveProcess moveData, ref LinearMoveData linearData) =>
                 {
-                    var item = GetNextPosition(current.currentPosition, target.TargetMove,
-                        linearData.initDistanceToTarget, linearData.accumulatedTime);
+                    var item = GetNextPosition(current.CurrentPosition, target.TargetMove,
+                        linearData.InitDistanceToTarget, linearData.AccumulatedTime);
 
-                    if (linearData.isPreLastMove)
+                    if (linearData.IsPreLastMove)
                     {
                         ecb.RemoveComponent<CardMoveProcess>(entityInQueryIndex, e);
                         ecb.RemoveComponent<LinearMoveData>(entityInQueryIndex, e);
@@ -55,18 +55,18 @@ namespace Game.ECS.System
                     }
                     else if (item.Item3 <= 1)
                     {
-                        moveData.nextPosition = target.TargetMove;
-                        moveData.nextScale = Vector2.one;
+                        moveData.NextPosition = target.TargetMove;
+                        moveData.NextScale = Vector2.one;
 
-                        linearData.isPreLastMove = true;
-                        linearData.accumulatedTime += deltaTime;
+                        linearData.IsPreLastMove = true;
+                        linearData.AccumulatedTime += deltaTime;
                     }
                     else
                     {
-                        moveData.nextPosition = item.Item1;
-                        moveData.nextScale = item.Item2;
+                        moveData.NextPosition = item.Item1;
+                        moveData.NextScale = item.Item2;
 
-                        linearData.accumulatedTime += deltaTime;
+                        linearData.AccumulatedTime += deltaTime;
                     }
 
                     //calc next position and scale

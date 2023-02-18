@@ -1,10 +1,6 @@
-﻿using CraftCar.ECS_UI.Components;
-using CraftCar.ECS.Components;
-using CraftCar.ECS.Components.SpawnData;
+﻿using Game.ECS_UI.Components;
 using Game.ECS.Components;
-using Game.ECS.System.Base;
 using Unity.Entities;
-using UnityEngine.UI;
 
 namespace Game.ECS.System
 {
@@ -23,8 +19,8 @@ namespace Game.ECS.System
             
             Entities.WithAll<CardTag, InstanceTag, DicElementData>().WithNone<UpdateWordCardTag>().ForEach((Entity entity, in UICardControllerComponent uiCard, in DicElementData word) =>
             {
-                uiCard.uiCardInstance.DescText1.text = word.ru.Value;
-                uiCard.uiCardInstance.DescText2.text = word.en.Value;
+                uiCard.uiCardInstance.DescText1.text = word.Ru.Value;
+                uiCard.uiCardInstance.DescText2.text = word.En.Value;
 
                 ecb.AddComponent(entity, new UpdateWordCardTag());
 

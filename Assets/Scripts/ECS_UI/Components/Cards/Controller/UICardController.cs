@@ -1,12 +1,10 @@
-﻿using System;
-using CraftCar.ECS.Components;
-using Game.ECS.Components;
+﻿using Game.ECS.Components;
 using UniRx;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CraftCar.ECS_UI.Components
+namespace Game.ECS_UI.Components
 {
     public class UICardController : MonoBehaviour
     {

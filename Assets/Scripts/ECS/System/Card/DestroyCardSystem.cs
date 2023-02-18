@@ -1,6 +1,5 @@
-using CraftCar.ECS_UI.Components;
+using Game.ECS_UI.Components;
 using Game.ECS.Components;
-using Game.ECS.System.Base;
 using Game.CustomPool;
 using Unity.Entities;
 

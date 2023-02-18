@@ -213,7 +213,6 @@ namespace Game.CustomPool
 		{
 			warmPool(prefab, size);
 		}
-
 	}
 }
 

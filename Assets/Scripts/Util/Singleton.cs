@@ -72,7 +72,6 @@ namespace Util
             IS_EXITING = true;
         }
         
-        
         private static void DebugLogFormat(string content, params object[] parameters)
         {
             Debug.LogFormat(content, parameters);

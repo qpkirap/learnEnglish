@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CraftCar.Config
+namespace Game.Config
 {
     [JsonObject(MemberSerialization.Fields)]
     public class DicJsonConfig

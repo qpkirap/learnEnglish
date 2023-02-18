@@ -1,6 +1,4 @@
-using CraftCar.ECS.Components;
 using Game.ECS.Components;
-using Game.ECS.System.Base;
 using Unity.Entities;
 
 namespace Game.ECS.System
@@ -9,11 +7,11 @@ namespace Game.ECS.System
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
 
-        private static readonly bool IsScalable = false;
-        private static readonly bool IsPaused = false;
-        private static readonly float TotalTime = 0.4f;
-        private static readonly float TimeLeft = 0.4f;
-        private static readonly float Timescale = 1f;
+        private const bool IsScalable = false;
+        private const bool IsPaused = false;
+        private const float TotalTime = 0.4f;
+        private const float TimeLeft = 0.4f;
+        private const float Timescale = 1f;
         
         protected override void OnCreate()
         {

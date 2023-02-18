@@ -3181,7 +3181,7 @@ GameObject:
   - component: {fileID: 1370972320}
   - component: {fileID: 1370972318}
   m_Layer: 0
-  m_Name: TestDic
+  m_Name: LoadDic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

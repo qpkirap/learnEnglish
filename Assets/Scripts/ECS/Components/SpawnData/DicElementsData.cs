@@ -1,9 +1,9 @@
 ﻿using Unity.Entities;
 
-namespace CraftCar.ECS.Components.SpawnData
+namespace Game.ECS.Components
 {
     public struct DicElementsData
     {
-        public BlobArray<DicElementData> dataArray;
+        public BlobArray<DicElementData> DataArray;
     }
 }

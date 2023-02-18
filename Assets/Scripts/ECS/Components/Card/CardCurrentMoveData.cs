@@ -1,11 +1,11 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace CraftCar.ECS.Components
+namespace Game.ECS.Components
 {
     public struct CardCurrentMoveData : IComponentData
     {
-        public float2 currentPosition;
-        public float2 currentLocalScale;
+        public float2 CurrentPosition;
+        public float2 CurrentLocalScale;
     }
 }

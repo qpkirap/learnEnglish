@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using CraftCar.ECS_UI.Components;
-using LearnEnglish.InitGame.GameResources;
-using Unity.Collections;
+using Game.ECS_UI.Components;
+using Game.Config;
 using Unity.Entities;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace CraftCar
+namespace Game
 {
     [GenerateAuthoringComponent]
     public class FactoriesCardData : IComponentData

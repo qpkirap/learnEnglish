@@ -1,5 +1,5 @@
-﻿using CraftCar.ECS.Components.SpawnData;
-using CraftCar.ECS.Tags.Spawn;
+﻿using Game.ECS.Components;
+using Game.ECS.Tags.Spawn;
 using Unity.Entities;
 using Unity.Transforms;
 using UnityEngine;
