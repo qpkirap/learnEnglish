@@ -1,6 +1,7 @@
 ﻿using Game.ECS_UI.Components;
 using Game.ECS.Components;
 using Unity.Entities;
+using UnityEngine.UI;
 
 namespace Game.ECS.System
 {
@@ -17,14 +18,17 @@ namespace Game.ECS.System
         {
             var ecb = _entityCommandBufferSystem.CreateCommandBuffer();
             
-            Entities.WithAll<CardTag, InstanceTag, DicElementData>().WithNone<UpdateWordCardTag>().ForEach((Entity entity, in UICardControllerComponent uiCard, in DicElementData word) =>
+            Entities
+                .WithAll<CardTag, InstanceTag, DicElementData>()
+                .WithNone<UpdateWordCardTag, CardMoveProcess>()
+                .ForEach((Entity entity, in UICardControllerComponent uiCard, in DicElementData word) =>
             {
                 uiCard.uiCardInstance.DescText1.text = word.Ru.Value;
                 uiCard.uiCardInstance.DescText2.text = word.En.Value;
 
                 ecb.AddComponent(entity, new UpdateWordCardTag());
 
-                //LayoutRebuilder.ForceRebuildLayoutImmediate(uiCard.uiCardInstance.Container);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(uiCard.uiCardInstance.Container);
                 
             }).WithStructuralChanges().WithoutBurst().Run();
         }

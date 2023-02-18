@@ -9,9 +9,10 @@ namespace Game.ECS.System
 
         private const bool IsScalable = false;
         private const bool IsPaused = false;
-        private const float TotalTime = 0.4f;
         private const float TimeLeft = 0.4f;
         private const float Timescale = 1f;
+        
+        public static readonly float TotalTime = 0.4f;
         
         protected override void OnCreate()
         {

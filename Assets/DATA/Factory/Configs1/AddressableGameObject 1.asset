@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AddressableGameObject 1
   m_EditorClassIdentifier: 
   goAsset:
-    m_AssetGUID: acfc8f0936744f2489839b8cbe5161cc
+    m_AssetGUID: 088c860e8747e2d46a28ba6b216ab75e
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0

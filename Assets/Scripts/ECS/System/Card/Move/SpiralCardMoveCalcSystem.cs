@@ -60,7 +60,7 @@ namespace Game.ECS.System
                     -MaxSpiralRadius, MaxSpiralRadius);
                 var nextPosition = GetNextPosition(moveData.CurrentPosition, spiralMoveParameters.AccumulatedTime,
                     calcSpiral);
-                var nextScale = GetNextScale(moveData.CurrentLocalScale, time);
+                var nextScale = GetNextScale(moveData.CurrentLocalScale, spiralMoveParameters.AccumulatedTime * ScaleSpeed);
 
                 spiralMoveParameters.KSpiral += time * SpeedScaleRadius;
                 spiralMoveParameters.AccumulatedTime += time;
@@ -84,7 +84,7 @@ namespace Game.ECS.System
 
         private static float2 GetNextScale(Vector2 currentScale, float time)
         {
-            var newScale = math.clamp(currentScale - Vector2.one * time * ScaleSpeed,
+            var newScale = math.clamp(currentScale - Vector2.one * time,
                 Vector2.zero,
                 Vector2.one);
 

@@ -48,11 +48,10 @@ namespace Game.ECS_UI.Components
 
         private void OnClick()
         {
-            if (entity != Entity.Null)
+            if (entity != Entity.Null && !manager.HasComponent<CardMoveProcess>(entity))
             {
                 manager.AddComponentData(entity, new ClickNextButtonTag());
                 manager.AddComponentData(entity, new SpiralMoveTag());
-                //manager.AddComponentData(entity, new PreDestroyTag());
             }
         }
 
