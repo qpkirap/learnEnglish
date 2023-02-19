@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1021636395771",
+    "project_id": "learnenglish-a0b04",
+    "storage_bucket": "learnenglish-a0b04.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021636395771:android:fab82ada70058a5df2265e",
+        "android_client_info": {
+          "package_name": "com.IliaM.LearnEnglish"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021636395771-4ro5724a4trrq59ohholqeu5m4kb1edi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYUtzDlFDFunykabR5llWXwzqzfJGrEfQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021636395771-4ro5724a4trrq59ohholqeu5m4kb1edi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
