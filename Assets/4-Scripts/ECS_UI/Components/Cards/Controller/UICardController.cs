@@ -1,4 +1,5 @@
 ﻿using Game.ECS.Components;
+using TMPro;
 using UniRx;
 using Unity.Entities;
 using UnityEngine;
@@ -12,11 +13,11 @@ namespace Game.ECS_UI.Components
         [SerializeField] private RectTransform container;
 
         [Header("First language")] 
-        [SerializeField] private Text headText1;
-        [SerializeField] private Text descText1; 
+        [SerializeField] private TMP_Text headText1;
+        [SerializeField] private TMP_Text descText1; 
         [Header("Two language")] 
-        [SerializeField] private Text headText2;
-        [SerializeField] private Text descText2;
+        [SerializeField] private TMP_Text headText2;
+        [SerializeField] private TMP_Text descText2;
 
         [Header("Body")] 
         [SerializeField] private Button nexButton;
@@ -30,13 +31,13 @@ namespace Game.ECS_UI.Components
         
         public RectTransform Container => container;
         
-        public Text HeadText1 => headText1;
+        public TMP_Text HeadText1 => headText1;
 
-        public Text DescText1 => descText1;
+        public TMP_Text DescText1 => descText1;
 
-        public Text HeadText2 => headText2;
+        public TMP_Text HeadText2 => headText2;
 
-        public Text DescText2 => descText2;
+        public TMP_Text DescText2 => descText2;
 
         public Button NexButton => nexButton;
 
