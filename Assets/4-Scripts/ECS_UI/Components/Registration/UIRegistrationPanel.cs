@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UniRx;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
@@ -53,7 +54,7 @@ namespace Game.ECS_UI.Components
 
     public struct FirebaseRegistrationData : IComponentData
     {
-        public string email;
-        public string pass;
+        public FixedString512Bytes email;
+        public FixedString512Bytes pass;
     }
 }

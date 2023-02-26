@@ -1,4 +1,6 @@
-﻿namespace Game
+﻿using Unity.Collections;
+
+namespace Game
 {
     public class UserState
     {
@@ -9,10 +11,10 @@
 
         public string Pass => pass;
 
-        public void SetData(string email, string pass)
+        public void SetData(FixedString512Bytes email, FixedString512Bytes pass)
         {
-            this.email = email;
-            this.pass = pass;
+            this.email = email.Value;
+            this.pass = pass.Value;
         }
 
         public void SaveData()
