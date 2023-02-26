@@ -36,6 +36,7 @@ MonoBehaviour:
     - Google.Play.Games.Editor
     - IngameDebugConsole.Editor
     - IngameDebugConsole.Runtime
+    - NewAssembly
     - PPv2URPConverters
     - RootProject
     - TestsPlay
