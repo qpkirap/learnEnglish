@@ -1,5 +1,9 @@
-﻿using GooglePlayGames;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using Firebase;
+using GooglePlayGames;
 using GooglePlayGames.Android;
+using GooglePlayGames.BasicApi;
 using GooglePlayGames.BasicApi.Nearby;
 using UnityEngine;
 
@@ -8,9 +12,25 @@ namespace Game
     public class FirebaseAuthController : MonoBehaviour
     {
        
-        private void Start()
+        private async void Start()
         {
+            var test1 = await FirebaseApp.CheckAndFixDependenciesAsync();
+            
             test();
+
+            Test2();
+        }
+
+        private async UniTask Test2()
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(3));
+            
+            Social.Active.Authenticate(Social.localUser, delegate(bool b)
+            {
+                Debug.Log($"TryAuthenticate user{Social.localUser}, bool {b}");
+                        
+                if (b) PlayGamesPlatform.Instance.Authenticate(CallbackLogin);
+            });
         }
 
         void test()
@@ -18,17 +38,29 @@ namespace Game
             PlayGamesPlatform.InitializeNearby(Callback);
             PlayGamesPlatform.Activate();
         }
-
+        
         private void Callback(INearbyConnectionClient obj)
         {
             Debug.Log("Nearby connections initialized");
+            
             Social.localUser.Authenticate((bool success) =>
             {
                 Debug.Log($"Social auth {success}");
 
                 if (success)
                 {
-                    PlayGamesPlatform.Instance.RequestServerSideAccess(
+                    
+                }
+            });
+        }
+
+        private void CallbackLogin(SignInStatus status)
+        {
+            Debug.Log($"CallbackLogin status {status}");
+
+            if (status == SignInStatus.Success)
+            {
+                PlayGamesPlatform.Instance.RequestServerSideAccess(
                         /* forceRefreshToken= */ false,
                         authCode =>
                         {
@@ -69,8 +101,7 @@ namespace Game
                                 Debug.Log($"name {playerName}");
                             }
                         });
-                }
-            });
+            }
         }
     }
 }
