@@ -15,7 +15,19 @@ namespace Game.ECS.System
             var factorySingleton = GetSingletonEntity<FactoriesCardData>();
             var factoryData = EntityManager.GetComponentData<FactoriesCardData>(factorySingleton);
 
+            CreateGameState();
             factoryData.InitAllFabrics();
+        }
+
+        private void CreateGameState()
+        {
+            var state = new GameState();
+            
+            state.LoadSave();
+
+            var entityState = EntityManager.CreateEntity();
+
+            EntityManager.AddComponentData(entityState, state);
         }
 
         protected override void OnUpdate()

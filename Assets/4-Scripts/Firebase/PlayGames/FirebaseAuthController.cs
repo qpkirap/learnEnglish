@@ -2,7 +2,6 @@
 using Cysharp.Threading.Tasks;
 using Firebase;
 using GooglePlayGames;
-using GooglePlayGames.Android;
 using GooglePlayGames.BasicApi;
 using GooglePlayGames.BasicApi.Nearby;
 using UnityEngine;

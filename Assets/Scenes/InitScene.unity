@@ -3289,6 +3289,8 @@ MonoBehaviour:
   cardFabrics:
   - {fileID: 11400000, guid: f67a85626552c0e4982e78a70facdfb9, type: 2}
   - {fileID: 11400000, guid: d3b32558f531e425da5ecbfeb8fcc122, type: 2}
+  regFabrics:
+  - {fileID: 11400000, guid: e6d61075f31fb4e42b5eb4494683af7c, type: 2}
 --- !u!1 &2060203630
 GameObject:
   m_ObjectHideFlags: 0

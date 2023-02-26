@@ -25,6 +25,10 @@ MonoBehaviour:
     m_Address: Assets/Prefabs/View - One_Yellow.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 376b4ee17224259479d90e8675ea718d
+    m_Address: Assets/3-Prefabs/Registration/PanelRegistation.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f248fc8a44eda134f854543b5cb60040, type: 2}
   m_SchemaSet:

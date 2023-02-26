@@ -58,14 +58,6 @@ namespace Game.Config
         }
     }
 
-    public abstract class CardMonoSharedComponent : Component
-    {
-        public abstract UniTask Init(Entity entity);
-        public abstract UICardController GetInstance(Entity entity, RectTransform parent = null);
-
-        public abstract Type GetSharedType { get; }
-    }
-    
 
     public abstract class MonoSharedFabricConfig <TComponent> : EntitySharedComponent
         where TComponent : struct, ISharedComponentData

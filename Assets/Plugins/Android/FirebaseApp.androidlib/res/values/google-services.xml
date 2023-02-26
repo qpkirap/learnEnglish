@@ -1,10 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_web_client_id">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/firebase_database_url,@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_android_client_id,@string/default_web_client_id">
+  <string name="firebase_database_url" translatable="false">https://learnenglish-a0b04-default-rtdb.europe-west1.firebasedatabase.app</string>
   <string name="gcm_defaultSenderId" translatable="false">1021636395771</string>
   <string name="google_storage_bucket" translatable="false">learnenglish-a0b04.appspot.com</string>
   <string name="project_id" translatable="false">learnenglish-a0b04</string>
   <string name="google_api_key" translatable="false">AIzaSyDYUtzDlFDFunykabR5llWXwzqzfJGrEfQ</string>
   <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDYUtzDlFDFunykabR5llWXwzqzfJGrEfQ</string>
   <string name="google_app_id" translatable="false">1:1021636395771:android:fab82ada70058a5df2265e</string>
-  <string name="default_web_client_id" translatable="false">1021636395771-4ro5724a4trrq59ohholqeu5m4kb1edi.apps.googleusercontent.com</string>
+  <string name="default_android_client_id" translatable="false">1021636395771-cn0hmo1o003numb128rlm34dvaktkr6e.apps.googleusercontent.com</string>
+  <string name="default_web_client_id" translatable="false">1021636395771-k7fdah2geseu5epi1gp4sqldrkoolst0.apps.googleusercontent.com</string>
 </resources>

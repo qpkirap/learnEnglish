@@ -21,6 +21,7 @@ namespace Game.ECS.System.SpawnCard
         {
             if (!HasSingleton<InitAllFabricsTag>()) return;
             if (!HasSingleton<EntityDicElementsData>()) return;
+            //if (!HasSingleton<FirebaseAppReadyTag>()) return;
 
             int countCard = 0;
 

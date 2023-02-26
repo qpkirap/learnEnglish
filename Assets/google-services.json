@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1021636395771",
+    "firebase_url": "https://learnenglish-a0b04-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "learnenglish-a0b04",
     "storage_bucket": "learnenglish-a0b04.appspot.com"
   },
@@ -14,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "1021636395771-4ro5724a4trrq59ohholqeu5m4kb1edi.apps.googleusercontent.com",
+          "client_id": "1021636395771-cn0hmo1o003numb128rlm34dvaktkr6e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.IliaM.LearnEnglish",
+            "certificate_hash": "6caeebf12756b27dbb66bd642edbb4829d39b9ca"
+          }
+        },
+        {
+          "client_id": "1021636395771-k7fdah2geseu5epi1gp4sqldrkoolst0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
