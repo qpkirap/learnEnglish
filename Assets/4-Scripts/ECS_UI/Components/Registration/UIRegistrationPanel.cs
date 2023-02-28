@@ -1,10 +1,9 @@
-﻿using TMPro;
+﻿using Game.ECS.System;
+using TMPro;
 using UniRx;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using UnityEngine.UI;
-
 
 namespace Game.ECS_UI.Components
 {
@@ -12,10 +11,11 @@ namespace Game.ECS_UI.Components
     {
         [SerializeField] private TMP_InputField emailField;
         [SerializeField] private TMP_InputField passField;
-        [SerializeField] private Button nextButton;
+        [SerializeField] private RegistrationButton nextButton;
 
         private string saveEmail;
         private string savePass;
+        private Entity entity;
 
         private static EntityManager EntityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -31,15 +31,17 @@ namespace Game.ECS_UI.Components
                 savePass = x;
             }).AddTo(this);
 
-            nextButton.OnClickAsObservable().Subscribe(x=>TryRegistration()).AddTo(this);
+            nextButton.OnClick.Subscribe(x=> TryRegistration()).AddTo(this);
         }
 
         private void TryRegistration()
         {
+            if (entity != Entity.Null && EntityManager.HasComponent<AsyncTag>(entity)) return;
+            
             if (!string.IsNullOrEmpty(saveEmail)
                 && !string.IsNullOrEmpty(savePass))
             {
-                var entity = EntityManager.CreateEntity();
+                entity = EntityManager.CreateEntity();
 
                 var data = new FirebaseRegistrationData()
                 {
@@ -49,6 +51,11 @@ namespace Game.ECS_UI.Components
 
                 EntityManager.AddComponentData(entity, data);
             }
+        }
+
+        public void SwitchStateButton(RegistrationButton.State state)
+        {
+            nextButton.SwitchState(state);
         }
     }
 
