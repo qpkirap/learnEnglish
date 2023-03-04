@@ -20,6 +20,7 @@ namespace Game.ECS.System
         private FirebaseApp app;
         private FirebaseAuth auth;
         private bool isInit;
+        private bool isActiveAsync;
 
         protected override void OnStartRunning()
         {
@@ -29,13 +30,13 @@ namespace Game.ECS.System
         private async UniTask CheckDependenciesAsync()
         {
             var handle = await FirebaseApp.CheckDependenciesAsync();
-            
+
             Debug.Log($"CheckDependenciesAsync status{handle}");
 
             if (handle == DependencyStatus.Available)
             {
                 auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-                
+
                 app = FirebaseApp.DefaultInstance;
 
                 var entity = EntityManager.CreateEntity();
@@ -46,54 +47,53 @@ namespace Game.ECS.System
 
         protected override void OnUpdate()
         {
+            if (isActiveAsync) return;
+            
             if (!HasSingleton<InitAllFabricsTag>()) return;
             if (!HasSingleton<FirebaseReadyDependenciesTag>()) return;
 
             if (isInit) return;
 
             if (app == null) return;
-            
+
             Entities
                 .WithAll<FirebaseRegistrationData>()
                 .WithNone<AsyncTag, FirebaseRegistrationCompleteTag>()
                 .ForEach((Entity e, FirebaseRegistrationData registration) =>
                 {
-                
                     EntityManager.AddComponentData(e, new AsyncTag());
 
-                    CreateUserAsync(registration.email, registration.pass);
+                    CreateUserAsync(e, registration.email, registration.pass);
 
                     //TryAuthPlayServices();
-                    
                 }).WithStructuralChanges().WithoutBurst().Run();
 
             Entities
                 .WithAll<FirebaseReadyDependenciesTag>()
                 .WithNone<AsyncTag, FirebaseRegistrationCompleteTag>()
                 .ForEach((Entity appEntity) =>
-            {
-                var stateEntity = GetSingletonEntity<GameState>();
-            
-                if (stateEntity == Entity.Null) return;
-
-                var dataState = EntityManager.GetComponentData<GameState>(stateEntity);
-            
-                if (dataState == null) return;
-
-                if (!string.IsNullOrEmpty(dataState.UserState.Email))
                 {
-                    EntityManager.AddComponentData(appEntity, new AsyncTag());
+                    var stateEntity = GetSingletonEntity<GameState>();
 
-                    SignInUserAsync(dataState.UserState.Email, dataState.UserState.Pass, string.Empty);
-                
-                    return;
+                    if (stateEntity == Entity.Null) return;
 
-                    //TryAuthPlayServices();
-                }
+                    var dataState = EntityManager.GetComponentData<GameState>(stateEntity);
 
-                TryCreateRegistrationPanel();
+                    if (dataState == null) return;
 
-            }).WithStructuralChanges().WithoutBurst().Run();
+                    if (!string.IsNullOrEmpty(dataState.UserState.Email))
+                    {
+                        EntityManager.AddComponentData(appEntity, new AsyncTag());
+
+                        SignInUserAsync(appEntity, dataState.UserState.Email, dataState.UserState.Pass);
+
+                        return;
+
+                        //TryAuthPlayServices();
+                    }
+
+                    TryCreateRegistrationPanel();
+                }).WithStructuralChanges().WithoutBurst().Run();
         }
 
         #region PlayServicesAuth
@@ -102,11 +102,11 @@ namespace Game.ECS.System
         {
             PlayGamesPlatform.InitializeNearby(CallbackPlayServices);
         }
-        
+
         private void CallbackPlayServices(INearbyConnectionClient obj)
         {
             Debug.Log("Nearby connections initialized");
-            
+
             Social.localUser.Authenticate((bool success) =>
             {
                 Debug.Log($"Social auth {success}");
@@ -118,12 +118,13 @@ namespace Game.ECS.System
                         authCode =>
                         {
                             // send code to server
-                            
+
                             Debug.Log($"authCode {authCode}");
 
                             Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-                            Firebase.Auth.Credential credential = Firebase.Auth.PlayGamesAuthProvider.GetCredential(authCode);
-                            
+                            Firebase.Auth.Credential credential =
+                                Firebase.Auth.PlayGamesAuthProvider.GetCredential(authCode);
+
                             auth.SignInWithCredentialAsync(credential).ContinueWith(task =>
                             {
                                 if (task.IsCanceled)
@@ -159,9 +160,9 @@ namespace Game.ECS.System
                 }
             });
         }
-        
+
         #endregion
-        
+
         private UICanvasController GetCanvas()
         {
             if (canvas != null) return this.canvas;
@@ -182,56 +183,59 @@ namespace Game.ECS.System
 
             var testCount = 0;
 
-            Entities.WithAll<UIRegistrationPanelComponent, InstanceTag>().ForEach((Entity e) =>
-            {
-                testCount++;
-            }).WithoutBurst().Run();
+            Entities.WithAll<UIRegistrationPanelComponent, InstanceTag>().ForEach((Entity e) => { testCount++; })
+                .WithoutBurst().Run();
 
             if (testCount > 0) return false;
-            
-            PlayGamesPlatform.Activate();
-                
+
+           // PlayGamesPlatform.Activate();
+
             Entities.WithAll<FactoriesCardData>().ForEach((FactoriesCardData factories) =>
             {
                 var entityPanel = EntityManager.CreateEntity();
-                    
+
                 var panel = factories.CreateRegInstance<UIRegistrationPanelFabric>(entityPanel, GetCanvas().root);
-                
+
                 panel.SwitchStateButton(RegistrationButton.State.CreateUser);
-                
             }).WithStructuralChanges().WithoutBurst().Run();
 
             return true;
         }
 
-        private async UniTask SignInUserAsync(string email, string pass, string test)
+        private async UniTask SignInUserAsync(Entity entity, string email, string pass)
         {
-            auth.SignInWithEmailAndPasswordAsync(email, pass).ContinueWith(task => {
+            isActiveAsync = true;
+            
+            await auth.SignInWithEmailAndPasswordAsync(email, pass).ContinueWith(async task =>
+            {
                 if (task.IsCanceled)
                 {
-                    Entities.WithAll<AsyncTag, UIRegistrationPanelComponent>().ForEach((Entity entity) =>
-                    {
-                        EntityManager.RemoveComponent<AsyncTag>(entity);
-                    }).WithStructuralChanges().WithoutBurst().Run();
+                    await UniTask.Delay(TimeSpan.FromSeconds(5));
+                    
+                    EntityManager.RemoveComponent<AsyncTag>(entity);
+
+                    isActiveAsync = false;
 
                     Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
                     return;
                 }
-                if (task.IsFaulted) {
+
+                if (task.IsFaulted)
+                {
+                    await UniTask.Delay(TimeSpan.FromSeconds(5));
                     
-                    Entities.WithAll<AsyncTag, UIRegistrationPanelComponent>().ForEach((Entity entity) =>
-                    {
-                        EntityManager.RemoveComponent<AsyncTag>(entity);
-                    }).WithStructuralChanges().WithoutBurst().Run();
-                    
+                    EntityManager.RemoveComponent<AsyncTag>(entity);
+
+                    isActiveAsync = false;
+
                     Debug.LogError("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
                     return;
                 }
-                
-                Entities.WithAll<AsyncTag, UIRegistrationPanelComponent>().ForEach((Entity entity) =>
+
+                if (entity != Entity.Null)
                 {
                     EntityManager.RemoveComponent<AsyncTag>(entity);
-                    
+
                     var data = new FirebaseRegistrationData()
                     {
                         email = email,
@@ -241,91 +245,121 @@ namespace Game.ECS.System
                     EntityManager.AddComponentData(entity, data);
                     EntityManager.AddComponentData(entity, new FirebaseAppReadyTag());
                     EntityManager.AddComponentData(entity, new FirebaseRegistrationCompleteTag());
-                    
+
                     isInit = true;
 
                     Firebase.Auth.FirebaseUser newUser = task.Result;
-                
+
+                    isActiveAsync = false;
+                    
                     Debug.LogFormat("User signed in successfully: {0} ({1})",
                         newUser.DisplayName, newUser.UserId);
-                }).WithStructuralChanges().WithoutBurst().Run();
+                }
+                
             });
         }
 
-        private async UniTask CreateUserAsync(FixedString512Bytes email, FixedString512Bytes pass)
+        private async UniTask CreateUserAsync(Entity entity, FixedString512Bytes email, FixedString512Bytes pass)
         {
+            isActiveAsync = true;
+            
             SwitchStateRegButton(RegistrationButton.State.Process);
             
-            Entities.WithAll<AsyncTag, UIRegistrationPanelComponent>().ForEach((Entity entity) =>
+            await auth.CreateUserWithEmailAndPasswordAsync(email.Value, pass.Value).ContinueWith(async task =>
             {
-                auth.CreateUserWithEmailAndPasswordAsync(email.Value, pass.Value).ContinueWith(task => {
-                if (task.IsCanceled) {
-                    Debug.LogError("CreateUserWithEmailAndPasswordAsync was canceled.");
-                    
-                    SwitchStateRegButton(RegistrationButton.State.CreateUser);
-                    
-                    EntityManager.RemoveComponent<AsyncTag>(entity);
+                if (task.IsCanceled)
+                {
+                    await UniTask.Delay(TimeSpan.FromSeconds(5));
+
+                    try
+                    {
+                        SwitchStateRegButton(RegistrationButton.State.CreateUser);
+
+                        if (entity != Entity.Null) EntityManager.RemoveComponent<AsyncTag>(entity);
+                    }
+                    catch (Exception e)
+                    {
+                    }
+
+                    isActiveAsync = false;
                     
                     return;
                 }
-                if (task.IsFaulted) {
-                    Debug.LogError("CreateUserWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+
+                if (task.IsFaulted)
+                {
+                    await UniTask.Delay(TimeSpan.FromSeconds(5));
                     
-                    SwitchStateRegButton(RegistrationButton.State.CreateUser);
+                    try
+                    {
+                        SwitchStateRegButton(RegistrationButton.State.CreateUser);
+
+                        if (entity != Entity.Null) EntityManager.RemoveComponent<AsyncTag>(entity);
+                    }
+                    catch (Exception e)
+                    {
+                    }
                     
-                    EntityManager.RemoveComponent<AsyncTag>(entity);
-                    
+                    isActiveAsync = false;
+
                     return;
                 }
-                
-                var stateEntity = GetSingletonEntity<GameState>();
-            
-                if (stateEntity == Entity.Null) return;
 
-                var dataState = EntityManager.GetComponentData<GameState>(stateEntity);
-                
-                isInit = true;
-                
-                dataState.UserState.SetData(email, pass);
-                
-                dataState.UserState.SaveData();
+                if (entity != Entity.Null)
+                {
+                    var stateEntity = GetSingletonEntity<GameState>();
 
-                EntityManager.RemoveComponent<AsyncTag>(entity);
-                EntityManager.AddComponentData(entity, new FirebaseRegistrationCompleteTag());
-                EntityManager.AddComponentData(entity, new FirebaseAppReadyTag());
+                    if (stateEntity == Entity.Null) return;
 
-                // Firebase user has been created.
-                Firebase.Auth.FirebaseUser newUser = task.Result;
+                    var dataState = EntityManager.GetComponentData<GameState>(stateEntity);
 
-                DestroyRegPanel();
+                    isInit = true;
+
+                    dataState.UserState.SetData(email, pass);
+
+                    dataState.UserState.SaveData();
+
+                    if (entity != Entity.Null)
+                    {
+                        EntityManager.RemoveComponent<AsyncTag>(entity);
+                        EntityManager.AddComponentData(entity, new FirebaseRegistrationCompleteTag());
+                        EntityManager.AddComponentData(entity, new FirebaseAppReadyTag());
+                    }
                 
-                Debug.LogFormat("Firebase user created successfully: {0} ({1})",
-                    newUser.DisplayName, newUser.UserId);
+                    // Firebase user has been created.
+                    Firebase.Auth.FirebaseUser newUser = task.Result;
+
+                    DestroyRegPanel();
+                    
+                    isActiveAsync = false;
+
+                    Debug.LogFormat("Firebase user created successfully: {0} ({1})",
+                        newUser.DisplayName, newUser.UserId);
+                }
             });
+        }
+
+        private void SwitchStateRegButton(RegistrationButton.State state)
+        {
+            Entities.WithAll<UIRegistrationPanelComponent, InstanceTag>()
+                .ForEach((UIRegistrationPanelComponent panel) => { panel.registrationPanel.SwitchStateButton(state); })
+                .WithoutBurst().Run();
+        }
+
+        private void DestroyRegPanel()
+        {
+            Entities.WithAll<UIRegistrationPanelComponent, InstanceTag>().ForEach((Entity e) =>
+            {
+                EntityManager.AddComponentData(e, new DestroyTag());
             }).WithStructuralChanges().WithoutBurst().Run();
-
-            void DestroyRegPanel()
-            {
-                Entities.WithAll<UIRegistrationPanelComponent, InstanceTag>().ForEach((Entity e) =>
-                {
-                    EntityManager.AddComponentData(e, new DestroyTag());
-                }).WithStructuralChanges().WithoutBurst().Run();
-            }
-
-            void SwitchStateRegButton(RegistrationButton.State state)
-            {
-                Entities.WithAll<UIRegistrationPanelComponent, InstanceTag>().ForEach((UIRegistrationPanelComponent panel) =>
-                {
-                    panel.registrationPanel.SwitchStateButton(state);
-                }).WithoutBurst().Run();
-            }
         }
     }
+
 
     public struct FirebaseReadyDependenciesTag : IComponentData
     {
     }
-    
+
     public struct FirebaseAppReadyTag : IComponentData
     {
     }

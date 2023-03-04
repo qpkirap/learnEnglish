@@ -1,10 +1,11 @@
 ﻿using Game.ECS_UI.Components;
 using Game.ECS.Components;
+using Game.ECS.System.SpawnCard;
 using Unity.Entities;
-using UnityEngine.UI;
 
 namespace Game.ECS.System
 {
+    [UpdateAfter(typeof(SpawnCardSystem))]
     public partial class UpdateWordCardSystem: UpdateSystem
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
@@ -28,8 +29,6 @@ namespace Game.ECS.System
 
                 ecb.AddComponent(entity, new UpdateWordCardTag());
 
-                LayoutRebuilder.ForceRebuildLayoutImmediate(uiCard.uiCardInstance.Container);
-                
             }).WithStructuralChanges().WithoutBurst().Run();
         }
     }
