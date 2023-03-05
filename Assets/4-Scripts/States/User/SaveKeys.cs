@@ -4,5 +4,7 @@
     {
         public const string emailKey = "email";
         public const string passKey = "pass";
+        public const string firebaseIdKey = "fir_id";
+        public const string pointClickKey = "point_clck";
     }
 }

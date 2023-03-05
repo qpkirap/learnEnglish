@@ -1,7 +1,6 @@
 ﻿using Firebase.Database;
 using Unity.Entities;
 using UnityEngine;
-using NotImplementedException = System.NotImplementedException;
 
 namespace Game.ECS.System
 {
@@ -18,7 +17,7 @@ namespace Game.ECS.System
 
         protected override void OnUpdate()
         {
-            throw new NotImplementedException();
+          //  throw new NotImplementedException();
         }
         
         private void writeNewUser(string userId, string name, string email) {

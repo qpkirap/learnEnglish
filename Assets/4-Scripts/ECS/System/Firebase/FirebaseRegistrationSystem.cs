@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using Firebase;
 using Firebase.Auth;
+using Firebase.Database;
 using Game.Config;
 using Game.ECS_UI.Components;
 using Game.ECS.Components;
@@ -16,6 +17,8 @@ namespace Game.ECS.System
     [UpdateAfter(typeof(InitSystem))]
     public partial class FirebaseRegistrationSystem : InitSystemBase
     {
+        private DatabaseReference reference;
+        
         private UICanvasController canvas;
         private FirebaseApp app;
         private FirebaseAuth auth;
@@ -24,6 +27,8 @@ namespace Game.ECS.System
 
         protected override void OnStartRunning()
         {
+            reference = FirebaseDatabase.DefaultInstance.RootReference;
+
             CheckDependenciesAsync();
         }
 
@@ -251,9 +256,13 @@ namespace Game.ECS.System
                     Firebase.Auth.FirebaseUser newUser = task.Result;
 
                     isActiveAsync = false;
-                    
+
                     Debug.LogFormat("User signed in successfully: {0} ({1})",
                         newUser.DisplayName, newUser.UserId);
+                    
+                    await UniTask.Delay(TimeSpan.FromSeconds(.5f));
+                    
+                    DataBaseUpdateUser();
                 }
                 
             });
@@ -307,6 +316,9 @@ namespace Game.ECS.System
 
                 if (entity != Entity.Null)
                 {
+                    // Firebase user has been created.
+                    Firebase.Auth.FirebaseUser newUser = task.Result;
+                    
                     var stateEntity = GetSingletonEntity<GameState>();
 
                     if (stateEntity == Entity.Null) return;
@@ -315,7 +327,7 @@ namespace Game.ECS.System
 
                     isInit = true;
 
-                    dataState.UserState.SetData(email, pass);
+                    dataState.UserState.SetData(newUser.UserId, email, pass);
 
                     dataState.UserState.SaveData();
 
@@ -325,9 +337,6 @@ namespace Game.ECS.System
                         EntityManager.AddComponentData(entity, new FirebaseRegistrationCompleteTag());
                         EntityManager.AddComponentData(entity, new FirebaseAppReadyTag());
                     }
-                
-                    // Firebase user has been created.
-                    Firebase.Auth.FirebaseUser newUser = task.Result;
 
                     DestroyRegPanel();
                     
@@ -335,6 +344,10 @@ namespace Game.ECS.System
 
                     Debug.LogFormat("Firebase user created successfully: {0} ({1})",
                         newUser.DisplayName, newUser.UserId);
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(.5f));
+                    
+                    DataBaseUpdateUser();
                 }
             });
         }
@@ -353,6 +366,28 @@ namespace Game.ECS.System
                 EntityManager.AddComponentData(e, new DestroyTag());
             }).WithStructuralChanges().WithoutBurst().Run();
         }
+
+        #region DataBase
+
+        private void DataBaseUpdateUser() {
+           
+            var stateEntity = GetSingletonEntity<GameState>();
+
+            if (stateEntity == Entity.Null) return;
+
+            var dataState = EntityManager.GetComponentData<GameState>(stateEntity);
+            
+            string json = (dataState.UserState.ToJson());
+
+            var handle = reference.Child("users").Child(dataState.UserState.FirebaseId).SetRawJsonValueAsync(json)
+                .ContinueWith(
+                    task =>
+                    {
+                        Debug.Log($"DataBaseUpdateUser {task.Status}");
+                    });
+        }
+
+        #endregion
     }
 
 
