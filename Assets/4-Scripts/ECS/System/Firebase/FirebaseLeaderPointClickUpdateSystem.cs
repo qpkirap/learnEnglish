@@ -7,17 +7,34 @@ namespace Game.ECS.System
     {
         private const int MaxScores = 20;
         
-        private DatabaseReference reference;
+        private DatabaseReference refLeaderboards;
         
         protected override void OnCreate()
         {
             // Get the root reference location of the database.
             DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference.Child("leaderboards");
+
+            refLeaderboards.OrderByChild(SaveKeys.pointClickKey).ValueChanged += GetScoreToLeaders;
+
         }
         
         protected override void OnUpdate()
         {
             
+        }
+
+        private void GetScoreToLeaders(object sender, ValueChangedEventArgs args)
+        {
+            var leaders = args.Snapshot.Value as List<object>;
+            
+            if (leaders == null) return;
+
+            foreach (var obj in leaders)
+            {
+                if (!(obj is Dictionary<string, object>)) continue;
+                
+                var score = (long)((Dictionary<string, object>)obj)[SaveKeys.pointClickKey];
+            }
         }
         
         private void AddScoreToLeaders(
@@ -27,7 +44,7 @@ namespace Game.ECS.System
 
             leaderBoardRef.RunTransaction(mutableData =>
             {
-                List<object> leaders = mutableData.Value as List<object>;
+                var leaders = mutableData.Value as List<object>;
 
                 if (leaders == null) {
                     leaders = new List<object>();
