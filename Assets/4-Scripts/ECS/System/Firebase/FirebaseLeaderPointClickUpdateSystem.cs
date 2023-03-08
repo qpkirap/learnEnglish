@@ -1,96 +1,155 @@
 ﻿using System.Collections.Generic;
 using Firebase.Database;
+using Game.ECS.Components;
+using Unity.Entities;
 
 namespace Game.ECS.System
 {
-    public class FirebaseLeaderPointClickUpdateSystem : UpdateSystem
+    [UpdateAfter(typeof(NextCardSystem))]
+    public partial class FirebaseLeaderPointClickUpdateSystem : UpdateSystem
     {
         private const int MaxScores = 20;
-        
+        private const float UpdateCycleTime = 60;
+
         private DatabaseReference refLeaderboards;
-        
+
+        private Entity timerUpdateEntity;
+
         protected override void OnCreate()
         {
             // Get the root reference location of the database.
-            DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference.Child("leaderboards");
+            refLeaderboards = FirebaseDatabase.DefaultInstance.RootReference.Child("leaderboards");
 
             refLeaderboards.OrderByChild(SaveKeys.pointClickKey).ValueChanged += GetScoreToLeaders;
 
+            timerUpdateEntity = EntityManager.CreateEntity();
+
+            //При первом обращении (после запуска) обновляем сразу
+            var timer = new Timer()
+            {
+                TotalTime = 10,
+                TimeLeft = 0,
+                Timescale = 1,
+                IsScalable = false,
+                IsPaused = false
+            };
+
+            EntityManager.AddComponentData(timerUpdateEntity, timer);
+            EntityManager.AddComponentData(timerUpdateEntity, new TimerPointClickTag());
         }
-        
+
         protected override void OnUpdate()
         {
-            
+            //обновляеть данные в бд
+            if (!HasSingleton<GameState>()) return;
+            if (!HasSingleton<TimerPointClickTag>()) return;
+            if (!HasSingleton<FirebaseRegistrationCompleteTag>()) return;
+
+            Entities.WithAll<TimerPointClickTag, Timer>().ForEach((Entity e, ref Timer timer) =>
+            {
+                if (!timer.IsCompleted) return;
+
+                var stateEntity = GetSingletonEntity<GameState>();
+
+                var data = EntityManager.GetComponentData<GameState>(stateEntity);
+
+                TryAddOrUpdateScoreLeaders(data.UserState.FirebaseId, data.UserState.PointClick, refLeaderboards);
+
+                //перезапуск таймера
+                timer.TimeLeft = UpdateCycleTime;
+                
+            }).WithoutBurst().Run();
         }
 
         private void GetScoreToLeaders(object sender, ValueChangedEventArgs args)
         {
             var leaders = args.Snapshot.Value as List<object>;
-            
+
             if (leaders == null) return;
 
             foreach (var obj in leaders)
             {
                 if (!(obj is Dictionary<string, object>)) continue;
-                
+
                 var score = (long)((Dictionary<string, object>)obj)[SaveKeys.pointClickKey];
             }
         }
-        
-        private void AddScoreToLeaders(
-            string firebaseId, 
-            long score,
-            DatabaseReference leaderBoardRef) {
 
+        private void TryAddOrUpdateScoreLeaders(
+            string firebaseId,
+            long score,
+            DatabaseReference leaderBoardRef)
+        {
             leaderBoardRef.RunTransaction(mutableData =>
             {
                 var leaders = mutableData.Value as List<object>;
+                var currentIndex = -1;
 
-                if (leaders == null) {
-                    leaders = new List<object>();
-                } 
-                else if (mutableData.ChildrenCount >= MaxScores) 
+                if (leaders == null)
                 {
-                    long minScore = long.MaxValue;
+                    leaders = new List<object>();
+                }
+                else 
+                {
+                    var minScore = long.MaxValue;
                     object minVal = null;
-                    
-                    foreach (var child in leaders) 
+
+                    for (var i = 0; i < leaders.Count; i++)
                     {
+                        var child = leaders[i];
                         if (!(child is Dictionary<string, object>)) continue;
-                        
-                        long childScore = (long)
+
+                        var childScore = (long)
                             ((Dictionary<string, object>)child)[SaveKeys.pointClickKey];
-                        
-                        if (childScore < minScore) 
+                        var firebaseId = (string)
+                            ((Dictionary<string, object>)child)[SaveKeys.firebaseIdKey];
+
+                        if (firebaseId.Equals(firebaseId)) currentIndex = i;
+
+                        if (childScore < minScore)
                         {
                             minScore = childScore;
                             minVal = child;
                         }
                     }
-                    
-                    if (minScore > score) 
+
+                    if (minScore >= score)
                     {
-                        // The new score is lower than the existing 5 scores, abort.
+                        // The new score is lower or equals than the existing 5 scores, abort.
                         return TransactionResult.Abort();
                     }
 
                     // Remove the lowest score.
-                    leaders.Remove(minVal);
+                    if (currentIndex < 0 && mutableData.ChildrenCount >= MaxScores) leaders.Remove(minVal);
                 }
 
                 // Add the new high score.
                 Dictionary<string, object> newScoreMap =
                     new Dictionary<string, object>();
-                
+
                 newScoreMap[SaveKeys.pointClickKey] = score;
                 newScoreMap[SaveKeys.firebaseIdKey] = firebaseId;
                 
-                leaders.Add(newScoreMap);
+                if (currentIndex < 0)
+                {
+                    leaders.Add(newScoreMap);
+                }
+                else
+                {
+                    leaders[currentIndex] = newScoreMap;
+                }
                 
                 mutableData.Value = leaders;
-                
+
                 return TransactionResult.Success(mutableData);
             });
         }
+    }
+
+    /// <summary>
+    /// Метка таймера для обновления таблиц лидеров
+    /// </summary>
+    public struct TimerPointClickTag : IComponentData
+    {
     }
 }

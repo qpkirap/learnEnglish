@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Game
 {
-    public class LeaderboardEntry
+    public partial class LeaderboardEntry
     {
         public readonly string firebaseId;
         public readonly int pointClick;
@@ -21,5 +24,24 @@ namespace Game
 
             return result;
         }
+    }
+    
+    public partial class LeaderboardEntry
+    {
+        public static LeaderboardEntry FromJson(string json) =>
+            JsonConvert.DeserializeObject<LeaderboardEntry>(json, Settings);
+        
+        public static readonly JsonSerializerSettings Settings = new()
+        {
+            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+            DateParseHandling = DateParseHandling.None,
+            Formatting = Formatting.Indented,
+            Converters =
+            {
+                new IsoDateTimeConverter {DateTimeStyles = DateTimeStyles.AssumeUniversal}
+            },
+        };
+        
+        public string ToJson() => JsonConvert.SerializeObject(this, Settings);
     }
 }
