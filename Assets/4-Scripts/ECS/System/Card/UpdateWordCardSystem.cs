@@ -9,10 +9,14 @@ namespace Game.ECS.System
     public partial class UpdateWordCardSystem: UpdateSystem
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
+
+        private static TextToSpeechSystem textToSpeechSystem;
         
         protected override void OnCreate()
         {
             _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
+            
+            InitTextToSpeech();
         }
 
         protected override void OnUpdate()
@@ -28,8 +32,16 @@ namespace Game.ECS.System
                 uiCard.uiCardInstance.DescText2.text = word.En.Value;
 
                 ecb.AddComponent(entity, new UpdateWordCardTag());
+                
+                textToSpeechSystem.StartSpeak(word.En.Value);
 
             }).WithStructuralChanges().WithoutBurst().Run();
+        }
+
+        private static void InitTextToSpeech()
+        {
+            TextToSpeechSystem.Instance.Setting("en-US", 1, 1);
+            textToSpeechSystem = TextToSpeechSystem.Instance;
         }
     }
 }
