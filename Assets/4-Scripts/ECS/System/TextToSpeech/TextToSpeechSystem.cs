@@ -24,6 +24,10 @@ namespace Game.ECS.System
         void Awake()
         {
             _instance = this;
+
+            var connectToJNI = AndroidJNI.AttachCurrentThread();
+            
+            Debug.Log($"connect to AndroidJNI result {connectToJNI > 0}");
         }
         #endregion
 
