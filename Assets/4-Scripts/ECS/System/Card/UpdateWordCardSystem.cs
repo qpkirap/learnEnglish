@@ -1,6 +1,7 @@
 ﻿using Game.ECS_UI.Components;
 using Game.ECS.Components;
 using Game.ECS.System.SpawnCard;
+using TextSpeech;
 using Unity.Entities;
 
 namespace Game.ECS.System
@@ -10,7 +11,7 @@ namespace Game.ECS.System
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
 
-        private static TextToSpeechSystem textToSpeechSystem;
+        private static TextToSpeech textToSpeechSystem;
         
         protected override void OnCreate()
         {
@@ -40,8 +41,8 @@ namespace Game.ECS.System
 
         private static void InitTextToSpeech()
         {
-            TextToSpeechSystem.Instance.Setting("en-US", 1, 1);
-            textToSpeechSystem = TextToSpeechSystem.Instance;
+            TextToSpeech.Instance.Setting("en-US", 1, 1);
+            textToSpeechSystem = TextToSpeech.Instance;
         }
     }
 }

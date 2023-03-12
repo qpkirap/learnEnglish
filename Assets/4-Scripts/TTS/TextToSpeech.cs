@@ -1,13 +1,16 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
+using System.Runtime.InteropServices;
+using UnityEngine.UI;
+using System;
 
-namespace Game.ECS.System
+namespace TextSpeech
 {
-    public class TextToSpeechSystem : MonoBehaviour
+    public class TextToSpeech : MonoBehaviour
     {
         #region Init
-        private static TextToSpeechSystem _instance;
-        public static TextToSpeechSystem Instance
+        private static TextToSpeech _instance;
+        public static TextToSpeech Instance
         {
             get
             {
@@ -15,7 +18,7 @@ namespace Game.ECS.System
                 {
                         //Create if it doesn't exist
                     GameObject go = new GameObject("TextToSpeech");
-                    _instance = go.AddComponent<TextToSpeechSystem>();
+                    _instance = go.AddComponent<TextToSpeech>();
                 }
                 return _instance;
             }
@@ -24,10 +27,6 @@ namespace Game.ECS.System
         void Awake()
         {
             _instance = this;
-
-            var connectToJNI = AndroidJNI.AttachCurrentThread();
-            
-            Debug.Log($"connect to AndroidJNI result {connectToJNI > 0}");
         }
         #endregion
 
