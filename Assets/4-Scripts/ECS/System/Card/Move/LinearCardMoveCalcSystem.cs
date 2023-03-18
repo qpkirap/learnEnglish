@@ -1,3 +1,4 @@
+using Game.ECS_UI.Components;
 using Game.ECS.Components;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -8,8 +9,13 @@ namespace Game.ECS.System
     public partial class LinearCardMoveCalcSystem : MovementSystem
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
+        private UICanvasController canvas;
         
         private const float moveSpeed = 2f;
+        private const float referenceWidth = 390;
+        private const float referenceHeight = 844;
+
+        private float currentWidthCanvas = -1;
 
 
         protected override void OnCreate()
@@ -21,6 +27,16 @@ namespace Game.ECS.System
         {
             var ecb = _entityCommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
             var deltaTime = Time.DeltaTime;
+
+            if (currentWidthCanvas < 0)
+            {
+                var canvas = GetCanvas();
+                if (canvas == null) return;
+
+                currentWidthCanvas = canvas.Root.rect.width;
+            }
+
+            var cacheWidth = currentWidthCanvas;
            
             //start move
             Entities.WithAll<LinearMoveTag, CardCurrentMoveData>().WithNone<CardMoveProcess>().ForEach(
@@ -31,6 +47,7 @@ namespace Game.ECS.System
                     var linearData = new CardMoveProcess();
                     linearData.NextPosition = current.CurrentPosition;
                     linearData.NextScale = current.CurrentLocalScale;
+                    //linearData.Width = referenceWidth;
 
                     ecb.AddComponent(entityInQueryIndex, e, linearData);
                     ecb.AddComponent(entityInQueryIndex, e,
@@ -53,6 +70,15 @@ namespace Game.ECS.System
                     }
                     else if (item.Item3 <= 1)
                     {
+                        var screenWidth = Screen.width;
+
+                        var currentScale = screenWidth / referenceWidth;
+
+                        if (currentScale > 0)
+                        {
+                            moveData.Width = (cacheWidth - referenceWidth) + referenceWidth;
+                        }
+                        
                         moveData.NextPosition = target.TargetMove;
                         moveData.NextScale = Vector2.one;
 
@@ -63,6 +89,7 @@ namespace Game.ECS.System
                     {
                         moveData.NextPosition = item.Item1;
                         moveData.NextScale = item.Item2;
+                        //moveData.Width = referenceWidth;
 
                         linearData.AccumulatedTime += deltaTime;
                     }
@@ -98,6 +125,18 @@ namespace Game.ECS.System
                 }).ScheduleParallel();
 
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
+        }
+        
+        private UICanvasController GetCanvas()
+        {
+            if (canvas != null) return this.canvas;
+
+            Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
+            {
+                canvas = canvasController;
+            }).WithoutBurst().Run();
+
+            return canvas;
         }
     }
 }

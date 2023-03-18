@@ -199,7 +199,7 @@ namespace Game.ECS.System
             {
                 var entityPanel = EntityManager.CreateEntity();
 
-                var panel = factories.CreateRegInstance<UIRegistrationPanelFabric>(entityPanel, GetCanvas().root);
+                var panel = factories.CreateRegInstance<UIRegistrationPanelFabric>(entityPanel, GetCanvas().CardRoot);
 
                 panel.SwitchStateButton(RegistrationButton.State.CreateUser);
             }).WithStructuralChanges().WithoutBurst().Run();

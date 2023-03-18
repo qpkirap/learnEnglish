@@ -21,7 +21,7 @@ namespace Game.ECS.System.SpawnCard
         {
             if (!HasSingleton<InitAllFabricsTag>()) return;
             if (!HasSingleton<EntityDicElementsData>()) return;
-            if (!HasSingleton<FirebaseAppReadyTag>()) return;
+            //if (!HasSingleton<FirebaseAppReadyTag>()) return;
 
             int countCard = 0;
 
@@ -42,7 +42,7 @@ namespace Game.ECS.System.SpawnCard
                     var cardEntity = EntityManager.CreateEntity(typeof(CardTag));
                     EntityManager.AddComponentData(cardEntity, new CardTag());
 
-                    var cardController = factories.CreateCardInstance<SimpleCardFabric>(cardEntity, canvas.root);
+                    var cardController = factories.CreateCardInstance<SimpleCardFabric>(cardEntity, canvas.CardRoot);
 
                     cardController.Inject(cardEntity, EntityManager);
 
@@ -58,7 +58,7 @@ namespace Game.ECS.System.SpawnCard
                     EntityManager.AddComponentData(cardEntity, randomWordsData);
                     EntityManager.AddComponentData(cardEntity,
                         new TargetMoveData()
-                            { TargetMove = new float2(canvas.root.sizeDelta.x / 2, canvas.root.sizeDelta.y / 2) });
+                            { TargetMove = new float2(canvas.Root.rect.width / 2, canvas.Root.rect.height / 2) });
                     EntityManager.AddComponentData(cardEntity, new LinearMoveTag());
                     EntityManager.AddComponentData(cardEntity, new RandomData() { Random = random > 0.5f });
                 }).WithStructuralChanges().WithoutBurst().Run();
@@ -81,7 +81,7 @@ namespace Game.ECS.System.SpawnCard
         {
             var canvasInstance = GetCanvas();
 
-            var screenSize = canvasInstance.root.sizeDelta;
+            var screenSize = canvasInstance.CardRoot.sizeDelta;
 
             var y = Random.Range(-screenSize.y / 2, screenSize.y * 1.5f);
 

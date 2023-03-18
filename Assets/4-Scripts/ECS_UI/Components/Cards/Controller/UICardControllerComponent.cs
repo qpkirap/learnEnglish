@@ -12,6 +12,8 @@ namespace Game.ECS_UI.Components
             set => uiCardInstance = value;
         }
 
+        public UIItemControllerBase BaseInstance => Instance;
+
         public UICardControllerComponent(UICardController uiCardInstance)
         {
             this.uiCardInstance = uiCardInstance;

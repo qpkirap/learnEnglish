@@ -7,5 +7,6 @@ namespace Game.ECS.Components
     {
         public float2 NextPosition;
         public float2 NextScale;
+        public float Width;
     }
 }

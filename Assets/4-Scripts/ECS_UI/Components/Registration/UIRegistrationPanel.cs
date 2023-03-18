@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Game.ECS_UI.Components
 {
-    public class UIRegistrationPanel : MonoBehaviour
+    public class UIRegistrationPanel : UIItemControllerBase
     {
         [SerializeField] private TMP_InputField emailField;
         [SerializeField] private TMP_InputField passField;
@@ -15,7 +15,6 @@ namespace Game.ECS_UI.Components
 
         private string saveEmail;
         private string savePass;
-        private Entity entity;
 
         private static EntityManager EntityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 

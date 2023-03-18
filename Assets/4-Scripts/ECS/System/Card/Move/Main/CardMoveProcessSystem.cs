@@ -1,6 +1,8 @@
+using DG.Tweening;
 using Game.ECS_UI.Components;
 using Game.ECS.Components;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Game.ECS.System
@@ -13,6 +15,15 @@ namespace Game.ECS.System
             {
                 card.Instance.Root.anchoredPosition = move.NextPosition;
                 card.Instance.Root.localScale = new Vector2(move.NextScale.x, move.NextScale.y);
+
+                if (move.Width > 0 && math.abs(move.Width - card.BaseInstance.currentWidth) > .1f)
+                {
+                    var rootSizeDelta = card.Instance.Root.sizeDelta;
+                    rootSizeDelta.x = move.Width;
+
+                    card.Instance.Root.DOSizeDelta(rootSizeDelta, .25f);
+                    card.BaseInstance.currentWidth = rootSizeDelta.x;
+                }
             }).WithoutBurst().Run();
         }
     }

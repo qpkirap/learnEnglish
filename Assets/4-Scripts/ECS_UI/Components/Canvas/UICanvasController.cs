@@ -6,6 +6,7 @@ namespace Game.ECS_UI.Components
     [GenerateAuthoringComponent]
     public class UICanvasController : IComponentData
     {
-        public RectTransform root;
+        public RectTransform Root;
+        public RectTransform CardRoot;
     }
 }

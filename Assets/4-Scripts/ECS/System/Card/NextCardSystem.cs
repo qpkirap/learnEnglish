@@ -6,7 +6,7 @@ namespace Game.ECS.System
     public partial class NextCardSystem : UpdateSystem
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
-        
+
         protected override void OnCreate()
         {
             _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();

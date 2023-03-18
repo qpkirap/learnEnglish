@@ -3,6 +3,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Unity.Collections;
+using UnityEngine;
 
 namespace Game
 {
@@ -28,6 +29,11 @@ namespace Game
             this.firebaseId = idFirebase;
             this.email = email.Value;
             this.pass = pass.Value;
+        }
+
+        public void UpgradePointClick(int step = 1)
+        {
+            pointClick += step;
         }
 
         public void SaveData()

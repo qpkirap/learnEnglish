@@ -7,9 +7,8 @@ using UnityEngine.UI;
 
 namespace Game.ECS_UI.Components
 {
-    public class UICardController : MonoBehaviour
+    public class UICardController : UIItemControllerBase
     {
-        [SerializeField] private RectTransform root;
         [SerializeField] private RectTransform container;
 
         [Header("First language")] 
@@ -21,11 +20,8 @@ namespace Game.ECS_UI.Components
 
         [Header("Body")] 
         [SerializeField] private Button nexButton;
-
-        private static EntityManager _manager => World.DefaultGameObjectInjectionWorld.EntityManager;
+        
         private CompositeDisposable disposable = new();
-        private Entity entity;
-        private EntityManager manager;
 
         public RectTransform Root => root;
         
@@ -40,12 +36,6 @@ namespace Game.ECS_UI.Components
         public TMP_Text DescText2 => descText2;
 
         public Button NexButton => nexButton;
-
-        public void Inject(Entity entity, EntityManager manager)
-        {
-            this.entity = entity;
-            this.manager = manager;
-        }
 
         private void OnClick()
         {

@@ -1165,6 +1165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16aa3d514bc147c2ab2e203d14ac6f58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: {fileID: 5614136622040973333}
   emailField: {fileID: 5614136622082893638}
   passField: {fileID: 5614136622305295773}
   nextButton: {fileID: 7609967669132779707}
