@@ -1,4 +1,5 @@
-﻿using Game.ECS.Components;
+﻿using Game.ECS_UI.Components;
+using Game.ECS.Components;
 using Unity.Entities;
 
 namespace Game.ECS.System
@@ -26,10 +27,19 @@ namespace Game.ECS.System
             
             if (gameState == null) return;
 
-            Entities.WithAll<ClickNextButtonTag, InstanceTag>().WithNone<RatingPointClickTag>().ForEach(() =>
+            var ecb = _entityCommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
+
+            Entities.WithAll<ClickNextButtonTag, InstanceTag>().WithNone<RatingPointClickTag>().ForEach((Entity e, int entityInQueryIndex) =>
             {
                 gameState.UserState.UpgradePointClick();
+                
+                ecb.AddComponent(entityInQueryIndex, e, new RatingPointClickTag());
             }).ScheduleParallel();
+            
+            Entities.WithAll<LeaderBoardController>().ForEach((LeaderBoardController controller) =>
+            {
+                controller.currentClickPoint.text = gameState.UserState.PointClick.ToString();
+            }).WithoutBurst().Run();
             
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }

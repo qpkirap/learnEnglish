@@ -11,6 +11,7 @@ namespace Game.ECS.System.SpawnCard
     public partial class SpawnCardSystem : UpdateSystem
     {
         private UICanvasController canvas;
+        private const float offsetSenterY = 70;
 
         protected override void OnCreate()
         {
@@ -58,7 +59,7 @@ namespace Game.ECS.System.SpawnCard
                     EntityManager.AddComponentData(cardEntity, randomWordsData);
                     EntityManager.AddComponentData(cardEntity,
                         new TargetMoveData()
-                            { TargetMove = new float2(canvas.Root.rect.width / 2, canvas.Root.rect.height / 2) });
+                            { TargetMove = new float2(canvas.Root.rect.width / 2, canvas.Root.rect.height / 2 - offsetSenterY) });
                     EntityManager.AddComponentData(cardEntity, new LinearMoveTag());
                     EntityManager.AddComponentData(cardEntity, new RandomData() { Random = random > 0.5f });
                 }).WithStructuralChanges().WithoutBurst().Run();

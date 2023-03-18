@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Firebase.Database;
+using Game.ECS_UI.Components;
 using Game.ECS.Components;
 using Unity.Entities;
 
@@ -44,14 +47,14 @@ namespace Game.ECS.System
             if (!HasSingleton<GameState>()) return;
             if (!HasSingleton<TimerPointClickTag>()) return;
             if (!HasSingleton<FirebaseRegistrationCompleteTag>()) return;
+            
+            var stateEntity = GetSingletonEntity<GameState>();
+
+            var data = EntityManager.GetComponentData<GameState>(stateEntity);
 
             Entities.WithAll<TimerPointClickTag, Timer>().ForEach((Entity e, ref Timer timer) =>
             {
                 if (!timer.IsCompleted) return;
-
-                var stateEntity = GetSingletonEntity<GameState>();
-
-                var data = EntityManager.GetComponentData<GameState>(stateEntity);
 
                 TryAddOrUpdateScoreLeaders(data.UserState.FirebaseId, data.UserState.PointClick, refLeaderboards);
 
@@ -67,12 +70,37 @@ namespace Game.ECS.System
 
             if (leaders == null) return;
 
+            var convert = new List<LeaderData>();
+
             foreach (var obj in leaders)
             {
                 if (!(obj is Dictionary<string, object>)) continue;
 
                 var score = (long)((Dictionary<string, object>)obj)[SaveKeys.pointClickKey];
+                var id = (string)((Dictionary<string, object>)obj)[SaveKeys.firebaseIdKey];
+                
+                convert.Add(new LeaderData(score, id));
             }
+            
+            UpdateUI(convert);
+        }
+
+        private void UpdateUI(List<LeaderData> data)
+        {
+            if (!data.Any()) return;
+            
+            var item = data.First();
+            
+            if(item == null) return;
+            
+            Entities.WithAll<LeaderBoardController>().ForEach((LeaderBoardController controller) =>
+            {
+                if (controller != null)
+                {
+                    controller.leaderText.text = $"{item.id.Substring(0, 10)}";
+                    controller.leaderPoint.text = $"{item.pointClick.ToString()}";
+                }
+            }).WithoutBurst().Run();
         }
 
         private void TryAddOrUpdateScoreLeaders(
@@ -151,5 +179,17 @@ namespace Game.ECS.System
     /// </summary>
     public struct TimerPointClickTag : IComponentData
     {
+    }
+
+    public class LeaderData
+    {
+        public readonly long pointClick;
+        public readonly string id;
+        
+        public LeaderData(long pointClick, string id)
+        {
+            this.pointClick = pointClick;
+            this.id = id;
+        }
     }
 }

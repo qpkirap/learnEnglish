@@ -34,6 +34,7 @@ namespace Game
         public void UpgradePointClick(int step = 1)
         {
             pointClick += step;
+            SaveData();
         }
 
         public void SaveData()
