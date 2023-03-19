@@ -1,6 +1,5 @@
 ﻿using TMPro;
 using Unity.Entities;
-using UnityEngine;
 
 namespace Game.ECS_UI.Components
 {
@@ -10,5 +9,6 @@ namespace Game.ECS_UI.Components
         public TMP_Text currentClickPoint;
         public TMP_Text leaderText;
         public TMP_Text leaderPoint;
+        public TMP_Text currentNick;
     }
 }

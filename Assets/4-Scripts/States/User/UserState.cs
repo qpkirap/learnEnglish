@@ -53,7 +53,7 @@ namespace Game
             email = ES3.LoadString(SaveKeys.emailKey, string.Empty);
             pass = ES3.LoadString(SaveKeys.passKey, string.Empty);
             firebaseId = ES3.LoadString(SaveKeys.firebaseIdKey, String.Empty);
-            nick = ES3.LoadString(SaveKeys.nickKey, String.Empty);
+            nick = ES3.LoadString(SaveKeys.nickKey, $"not reg");
             pointClick = ES3.Load<long>(SaveKeys.pointClickKey, 0);
         }
         

@@ -11,7 +11,7 @@ namespace Game.ECS.System.SpawnCard
     public partial class SpawnCardSystem : UpdateSystem
     {
         private UICanvasController canvas;
-        private const float offsetSenterY = 70;
+        private const float offsetSenterY = 107;
 
         protected override void OnCreate()
         {

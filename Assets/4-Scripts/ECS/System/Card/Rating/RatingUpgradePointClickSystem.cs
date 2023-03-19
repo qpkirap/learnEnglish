@@ -4,7 +4,7 @@ using Unity.Entities;
 
 namespace Game.ECS.System
 {
-    [UpdateBefore(typeof(NextCardSystem))]
+    [UpdateAfter(typeof(FirebaseLeaderPointClickUpdateSystem))]
     public partial class RatingUpgradePointClickSystem : UpdateSystem
     {
         private static GameState gameState;
@@ -34,11 +34,14 @@ namespace Game.ECS.System
                 gameState.UserState.UpgradePointClick();
                 
                 ecb.AddComponent(entityInQueryIndex, e, new RatingPointClickTag());
-            }).ScheduleParallel();
+            }).WithoutBurst().ScheduleParallel();
+            
+            if (!HasSingleton<LeaderBoardController>()) return;
             
             Entities.WithAll<LeaderBoardController>().ForEach((LeaderBoardController controller) =>
             {
                 controller.currentClickPoint.text = gameState.UserState.PointClick.ToString();
+                controller.currentNick.text = gameState.UserState.Nick ?? string.Empty;
             }).WithoutBurst().Run();
             
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);

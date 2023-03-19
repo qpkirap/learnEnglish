@@ -5,6 +5,7 @@ using Firebase.Database;
 using Game.ECS_UI.Components;
 using Game.ECS.Components;
 using Unity.Entities;
+using Util;
 
 namespace Game.ECS.System
 {
@@ -23,7 +24,7 @@ namespace Game.ECS.System
             // Get the root reference location of the database.
             refLeaderboards = FirebaseDatabase.DefaultInstance.RootReference.Child("leaderboards");
 
-            refLeaderboards.OrderByChild(SaveKeys.pointClickKey).ValueChanged += GetScoreToLeaders;
+            refLeaderboards.OrderByChild(SaveKeys.pointClickKey).ValueChanged += UpdateViewScoreLeaders;
 
             timerUpdateEntity = EntityManager.CreateEntity();
 
@@ -56,7 +57,7 @@ namespace Game.ECS.System
             {
                 if (!timer.IsCompleted) return;
 
-                TryAddOrUpdateScoreLeaders(data.UserState.FirebaseId, data.UserState.PointClick, refLeaderboards);
+                TryAddOrUpdateScoreLeaders(data.UserState.FirebaseId, data.UserState.Nick, data.UserState.PointClick, refLeaderboards);
 
                 //перезапуск таймера
                 timer.TimeLeft = UpdateCycleTime;
@@ -64,11 +65,16 @@ namespace Game.ECS.System
             }).WithoutBurst().Run();
         }
 
-        private void GetScoreToLeaders(object sender, ValueChangedEventArgs args)
+        private void UpdateViewScoreLeaders(object sender, ValueChangedEventArgs args)
         {
             var leaders = args.Snapshot.Value as List<object>;
 
-            if (leaders == null) return;
+            if (leaders == null)
+            {
+                UpdateUI();
+                
+                return;
+            }
 
             var convert = new List<LeaderData>();
 
@@ -78,33 +84,34 @@ namespace Game.ECS.System
 
                 var score = (long)((Dictionary<string, object>)obj)[SaveKeys.pointClickKey];
                 var id = (string)((Dictionary<string, object>)obj)[SaveKeys.firebaseIdKey];
-                
-                convert.Add(new LeaderData(score, id));
+                var nick = (string)((Dictionary<string, object>)obj)[SaveKeys.nickKey];
+
+                convert.Add(new LeaderData(score, id, nick));
             }
             
             UpdateUI(convert);
         }
 
-        private void UpdateUI(List<LeaderData> data)
+        private void UpdateUI(List<LeaderData> data = null)
         {
-            if (!data.Any()) return;
+            var nick = data != null && data.Any() ? data.First().nick : $"!not found";
+            var point = data != null && data.Any() ? data.First().pointClick : 0;
             
-            var item = data.First();
-            
-            if(item == null) return;
-            
+            if (!HasSingleton<LeaderBoardController>()) return;
+
             Entities.WithAll<LeaderBoardController>().ForEach((LeaderBoardController controller) =>
             {
                 if (controller != null)
                 {
-                    controller.leaderText.text = $"{item.id.Substring(0, 10)}";
-                    controller.leaderPoint.text = $"{item.pointClick.ToString()}";
+                    controller.leaderText.text = $"{nick}";
+                    controller.leaderPoint.text = $"{point.ToPrettyString()}";
                 }
             }).WithoutBurst().Run();
         }
 
         private void TryAddOrUpdateScoreLeaders(
             string curFirebaseId,
+            string curNick,
             long score,
             DatabaseReference leaderBoardRef)
         {
@@ -158,6 +165,7 @@ namespace Game.ECS.System
 
                 newScoreMap[SaveKeys.pointClickKey] = score;
                 newScoreMap[SaveKeys.firebaseIdKey] = curFirebaseId;
+                newScoreMap[SaveKeys.nickKey] = curNick; 
                 
                 if (currentIndex < 0)
                 {
@@ -194,11 +202,13 @@ namespace Game.ECS.System
     {
         public readonly long pointClick;
         public readonly string id;
+        public readonly string nick;
         
-        public LeaderData(long pointClick, string id)
+        public LeaderData(long pointClick, string id, string nick)
         {
             this.pointClick = pointClick;
             this.id = id;
+            this.nick = nick;
         }
     }
 }
