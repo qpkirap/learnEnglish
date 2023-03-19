@@ -11,6 +11,8 @@ namespace Game.Ads
         private const string idDemo = "demo-rewarded-yandex";
         private const string id = "R-M-2265338-2";
         private RewardedAd rewardedAd;
+
+        private Interstitial interstitial;
         
         private void Awake()
         {
@@ -20,14 +22,14 @@ namespace Game.Ads
 
             RequestRewardedAd();
 
-            //Test();
+            Test();
         }
 
         private async UniTask Test()
         {
             await UniTask.Delay(TimeSpan.FromSeconds(3));
-            
-            ShowRewardedAd();
+
+            ShowInterstitial();
         }
         
         private void RequestRewardedAd()
@@ -38,6 +40,24 @@ namespace Game.Ads
             AddSubscribeAds();
 
             rewardedAd.LoadAd(request);
+        }
+
+        private void ShowInterstitial()
+        {
+            interstitial = new Interstitial(id);
+            AdRequest request = new AdRequest.Builder().Build();
+            interstitial.LoadAd(request);
+
+            interstitial.OnInterstitialLoaded += (sender, args) =>
+            {
+                interstitial.Show();
+            };
+            
+            interstitial.OnReturnedToApplication += HandleReturnedToApplication;
+            interstitial.OnLeftApplication += HandleLeftApplication;
+            interstitial.OnAdClicked += HandleAdClicked;
+         
+            interstitial.OnImpression += HandleImpression;
         }
         
         private void ShowRewardedAd()
