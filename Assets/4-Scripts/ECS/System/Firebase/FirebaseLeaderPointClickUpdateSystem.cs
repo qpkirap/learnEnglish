@@ -48,6 +48,7 @@ namespace Game.ECS.System
             if (!HasSingleton<GameState>()) return;
             if (!HasSingleton<TimerPointClickTag>()) return;
             if (!HasSingleton<FirebaseRegistrationCompleteTag>()) return;
+            if (!HasSingleton<LeaderTopBoardController>()) return;
             
             var stateEntity = GetSingletonEntity<GameState>();
 
@@ -96,17 +97,13 @@ namespace Game.ECS.System
         {
             var nick = data != null && data.Any() ? data.First().nick : $"!not found";
             var point = data != null && data.Any() ? data.First().pointClick : 0;
-            
-            if (!HasSingleton<LeaderBoardController>()) return;
 
-            Entities.WithAll<LeaderBoardController>().ForEach((LeaderBoardController controller) =>
+            Entities.WithAll<LeaderTopBoardController>().ForEach((in LeaderTopBoardController controller) =>
             {
-                if (controller != null)
-                {
-                    controller.leaderText.text = $"{nick}";
-                    controller.leaderPoint.text = $"{point.ToPrettyString()}";
-                }
-            }).WithoutBurst().Run();
+                controller.leaderText.text = $"{nick}";
+                controller.leaderPoint.text = $"{point.ToPrettyString()}";
+                
+            }).WithStructuralChanges().WithoutBurst().Run();
         }
 
         private void TryAddOrUpdateScoreLeaders(
