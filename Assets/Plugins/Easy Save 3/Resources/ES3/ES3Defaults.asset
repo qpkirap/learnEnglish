@@ -49,6 +49,7 @@ MonoBehaviour:
     - UniTask.Editor
     - UniTask.Linq
     - UniTask.TextMeshPro
+    - YandexMobileAds
     showAdvancedSettings: 1
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1
