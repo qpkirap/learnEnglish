@@ -4,6 +4,7 @@ using UnityEngine;
 using YandexMobileAds;
 using YandexMobileAds.Base;
 
+
 namespace Game.Ads
 {
     public class AdsController : MonoBehaviour
