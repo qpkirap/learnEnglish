@@ -3,7 +3,6 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Unity.Collections;
-using UnityEngine;
 
 namespace Game
 {
@@ -15,6 +14,7 @@ namespace Game
 
         private string email;
         private string pass;
+        private string nick;
 
         public string FirebaseId => firebaseId;
         
@@ -23,12 +23,14 @@ namespace Game
         public string Email => email;
 
         public string Pass => pass;
+        public string Nick => nick;
 
-        public void SetData(string idFirebase, FixedString512Bytes email, FixedString512Bytes pass)
+        public void SetData(string idFirebase, FixedString512Bytes email, FixedString512Bytes pass,  FixedString512Bytes nick)
         {
             this.firebaseId = idFirebase;
             this.email = email.Value;
             this.pass = pass.Value;
+            this.nick = nick.Value;
         }
 
         public void UpgradePointClick(int step = 1)
@@ -43,6 +45,7 @@ namespace Game
             ES3.Save(SaveKeys.passKey, pass);
             ES3.Save(SaveKeys.firebaseIdKey, firebaseId);
             ES3.Save(SaveKeys.pointClickKey, pointClick);
+            ES3.Save(SaveKeys.nickKey, nick);
         }
 
         public void LoadSave()
@@ -50,6 +53,7 @@ namespace Game
             email = ES3.LoadString(SaveKeys.emailKey, string.Empty);
             pass = ES3.LoadString(SaveKeys.passKey, string.Empty);
             firebaseId = ES3.LoadString(SaveKeys.firebaseIdKey, String.Empty);
+            nick = ES3.LoadString(SaveKeys.nickKey, String.Empty);
             pointClick = ES3.Load<long>(SaveKeys.pointClickKey, 0);
         }
         

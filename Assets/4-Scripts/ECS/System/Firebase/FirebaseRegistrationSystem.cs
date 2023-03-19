@@ -68,7 +68,7 @@ namespace Game.ECS.System
                 {
                     EntityManager.AddComponentData(e, new AsyncTag());
 
-                    CreateUserAsync(e, registration.email, registration.pass);
+                    CreateUserAsync(e, registration.email, registration.pass, registration.nick);
 
                     //TryAuthPlayServices();
                 }).WithStructuralChanges().WithoutBurst().Run();
@@ -268,7 +268,11 @@ namespace Game.ECS.System
             });
         }
 
-        private async UniTask CreateUserAsync(Entity entity, FixedString512Bytes email, FixedString512Bytes pass)
+        private async UniTask CreateUserAsync(
+            Entity entity,
+            FixedString512Bytes email,
+            FixedString512Bytes pass,
+            FixedString512Bytes nick)
         {
             isActiveAsync = true;
             
@@ -278,8 +282,6 @@ namespace Game.ECS.System
             {
                 if (task.IsCanceled)
                 {
-                    await UniTask.Delay(TimeSpan.FromSeconds(5));
-
                     try
                     {
                         SwitchStateRegButton(RegistrationButton.State.CreateUser);
@@ -297,8 +299,6 @@ namespace Game.ECS.System
 
                 if (task.IsFaulted)
                 {
-                    await UniTask.Delay(TimeSpan.FromSeconds(5));
-                    
                     try
                     {
                         SwitchStateRegButton(RegistrationButton.State.CreateUser);
@@ -327,7 +327,7 @@ namespace Game.ECS.System
 
                     isInit = true;
 
-                    dataState.UserState.SetData(newUser.UserId, email, pass);
+                    dataState.UserState.SetData(newUser.UserId, email, pass, nick);
 
                     dataState.UserState.SaveData();
 

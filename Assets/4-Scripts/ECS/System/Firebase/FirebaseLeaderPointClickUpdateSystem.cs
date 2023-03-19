@@ -104,7 +104,7 @@ namespace Game.ECS.System
         }
 
         private void TryAddOrUpdateScoreLeaders(
-            string firebaseId,
+            string curFirebaseId,
             long score,
             DatabaseReference leaderBoardRef)
         {
@@ -132,7 +132,7 @@ namespace Game.ECS.System
                         var firebaseId = (string)
                             ((Dictionary<string, object>)child)[SaveKeys.firebaseIdKey];
 
-                        if (firebaseId.Equals(firebaseId)) currentIndex = i;
+                        if (firebaseId.Equals(curFirebaseId)) currentIndex = i;
 
                         if (childScore < minScore)
                         {
@@ -141,14 +141,15 @@ namespace Game.ECS.System
                         }
                     }
 
-                    if (minScore >= score)
+                    if (minScore >= score && mutableData.ChildrenCount >= MaxScores)
                     {
                         // The new score is lower or equals than the existing 5 scores, abort.
                         return TransactionResult.Abort();
                     }
 
                     // Remove the lowest score.
-                    if (currentIndex < 0 && mutableData.ChildrenCount >= MaxScores) leaders.Remove(minVal);
+                    if (currentIndex < 0
+                        && mutableData.ChildrenCount >= MaxScores) leaders.Remove(minVal);
                 }
 
                 // Add the new high score.
@@ -156,7 +157,7 @@ namespace Game.ECS.System
                     new Dictionary<string, object>();
 
                 newScoreMap[SaveKeys.pointClickKey] = score;
-                newScoreMap[SaveKeys.firebaseIdKey] = firebaseId;
+                newScoreMap[SaveKeys.firebaseIdKey] = curFirebaseId;
                 
                 if (currentIndex < 0)
                 {
@@ -164,6 +165,14 @@ namespace Game.ECS.System
                 }
                 else
                 {
+                    var oldScore = (long)
+                        ((Dictionary<string, object>)leaders[currentIndex])[SaveKeys.pointClickKey];
+                    
+                    if (oldScore == score)
+                    {
+                        return TransactionResult.Abort();
+                    }
+                    
                     leaders[currentIndex] = newScoreMap;
                 }
                 
