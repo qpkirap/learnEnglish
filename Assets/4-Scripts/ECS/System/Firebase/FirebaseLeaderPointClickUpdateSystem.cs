@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Firebase.Database;
 using Game.ECS_UI.Components;
@@ -15,16 +14,15 @@ namespace Game.ECS.System
         private const int MaxScores = 20;
         private const float UpdateCycleTime = 60;
 
-        private DatabaseReference refLeaderboards;
+        private static DatabaseReference refLeaderboards;
+        private static DatabaseReference root;
 
         private Entity timerUpdateEntity;
 
         protected override void OnCreate()
         {
             // Get the root reference location of the database.
-            refLeaderboards = FirebaseDatabase.DefaultInstance.RootReference.Child("leaderboards");
-
-            refLeaderboards.OrderByChild(SaveKeys.pointClickKey).ValueChanged += UpdateViewScoreLeaders;
+            UpdateReference();
 
             timerUpdateEntity = EntityManager.CreateEntity();
 
@@ -42,6 +40,25 @@ namespace Game.ECS.System
             EntityManager.AddComponentData(timerUpdateEntity, new TimerPointClickTag());
         }
 
+        private void UpdateReference()
+        {
+            if (root != null)
+            {
+                root.ValueChanged -= UpdateViewScoreLeaders;
+            }
+            if(refLeaderboards != null)
+            {
+                refLeaderboards.ValueChanged -= UpdateViewScoreLeaders;
+            }
+            
+            root = FirebaseDatabase.DefaultInstance.RootReference;
+            if (root != null) refLeaderboards = root.Child("leaderboards");
+
+            if (refLeaderboards != null)
+                refLeaderboards.OrderByChild(SaveKeys.pointClickKey).ValueChanged += UpdateViewScoreLeaders;
+            else root.ValueChanged += UpdateViewScoreLeaders;
+        }
+
         protected override void OnUpdate()
         {
             //обновляеть данные в бд
@@ -56,6 +73,11 @@ namespace Game.ECS.System
             Entities.WithAll<TimerPointClickTag, Timer>().ForEach((Entity e, ref Timer timer) =>
             {
                 if (!timer.IsCompleted) return;
+                if (refLeaderboards == null)
+                {
+                    UpdateReference();
+                    if(refLeaderboards == null) return;
+                }
 
                 TryAddOrUpdateScoreLeaders(data.UserState.FirebaseId, data.UserState.Nick, data.UserState.PointClick, refLeaderboards);
 
@@ -67,6 +89,8 @@ namespace Game.ECS.System
 
         private void UpdateViewScoreLeaders(object sender, ValueChangedEventArgs args)
         {
+            if (args == null || args.Snapshot == null || args.Snapshot.Value == null) return;
+            
             var leaders = args.Snapshot.Value as List<object>;
 
             if (leaders == null)
