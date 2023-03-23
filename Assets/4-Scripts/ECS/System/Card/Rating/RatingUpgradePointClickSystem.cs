@@ -36,12 +36,13 @@ namespace Game.ECS.System
                 ecb.AddComponent(entityInQueryIndex, e, new RatingPointClickTag());
             }).WithoutBurst().ScheduleParallel();
             
-            if (!HasSingleton<LeaderCurrentPointClickController>()) return;
+            if (!HasSingleton<LeaderBoardController>()) return;
             
-            Entities.WithAll<LeaderCurrentPointClickController>().ForEach((in LeaderCurrentPointClickController controller) =>
+            Entities.WithAll<LeaderBoardController>().ForEach((LeaderBoardController controller) =>
             {
                 controller.currentClickPoint.text = gameState.UserState.PointClick.ToString();
-            }).WithStructuralChanges().WithoutBurst().Run();
+                controller.currentNick.text = gameState.UserState.Nick ?? string.Empty;
+            }).WithoutBurst().Run();
             
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }

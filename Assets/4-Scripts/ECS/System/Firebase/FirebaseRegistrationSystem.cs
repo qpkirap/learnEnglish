@@ -56,7 +56,6 @@ namespace Game.ECS.System
             
             if (!HasSingleton<InitAllFabricsTag>()) return;
             if (!HasSingleton<FirebaseReadyDependenciesTag>()) return;
-            //if (!HasSingleton<UICanvasController>()) return;
 
             if (isInit) return;
 
@@ -91,7 +90,7 @@ namespace Game.ECS.System
                     {
                         EntityManager.AddComponentData(appEntity, new AsyncTag());
 
-                        SignInUserAsync(appEntity, dataState.UserState.Email, dataState.UserState.Pass, dataState.UserState.Nick);
+                        SignInUserAsync(appEntity, dataState.UserState.Email, dataState.UserState.Pass);
 
                         return;
 
@@ -99,32 +98,6 @@ namespace Game.ECS.System
                     }
 
                     TryCreateRegistrationPanel();
-                }).WithStructuralChanges().WithoutBurst().Run();
-            
-            UpdateCurrentNick();
-        }
-
-        private void UpdateCurrentNick()
-        {
-            Entities
-                .WithAll<FirebaseReadyDependenciesTag>().WithNone<SetCurrentNickTag>()
-                .ForEach((ref Entity e) =>
-                {
-                    var stateEntity = GetSingletonEntity<GameState>();
-
-                    if (stateEntity == Entity.Null) return;
-
-                    var dataState = EntityManager.GetComponentData<GameState>(stateEntity);
-
-                    if (dataState == null) return;
-
-                    var controllerE = GetSingletonEntity<LeaderBottomBoardController>();
-                    var controller = EntityManager.GetComponentData<LeaderBottomBoardController>(controllerE);
-
-                    controller.currentNick.text = dataState.UserState.Nick;
-
-                    EntityManager.AddComponentData(e, new SetCurrentNickTag());
-
                 }).WithStructuralChanges().WithoutBurst().Run();
         }
 
@@ -194,7 +167,6 @@ namespace Game.ECS.System
         }
 
         #endregion
-        
 
         private UICanvasController GetCanvas()
         {
@@ -235,7 +207,7 @@ namespace Game.ECS.System
             return true;
         }
 
-        private async UniTask SignInUserAsync(Entity entity, string email, string pass, string nick)
+        private async UniTask SignInUserAsync(Entity entity, string email, string pass)
         {
             isActiveAsync = true;
             
@@ -272,8 +244,7 @@ namespace Game.ECS.System
                     var data = new FirebaseRegistrationData()
                     {
                         email = email,
-                        pass = pass,
-                        nick = nick
+                        pass = pass
                     };
 
                     EntityManager.AddComponentData(entity, data);
@@ -377,8 +348,6 @@ namespace Game.ECS.System
                     await UniTask.Delay(TimeSpan.FromSeconds(.5f));
                     
                     DataBaseUpdateUser();
-
-                    UpdateCurrentNick();
                 }
             });
         }
@@ -435,10 +404,6 @@ namespace Game.ECS.System
     }
 
     public struct AsyncTag : IComponentData
-    {
-    }
-
-    public struct SetCurrentNickTag : IComponentData
     {
     }
 }
