@@ -44,7 +44,7 @@ namespace Game.ECS.System
                 controller.currentNick.text = gameState.UserState.Nick ?? string.Empty;
             }).WithoutBurst().Run();
             
-            _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
+            //_entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
         }
     }
 }
