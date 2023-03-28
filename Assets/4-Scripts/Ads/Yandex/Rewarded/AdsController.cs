@@ -25,8 +25,7 @@ namespace Game.Ads
             AdRequest request = new AdRequest.Builder().Build();
             interstitial.LoadAd(request);
         }
-        
-        
+
         public void ShowInterstitial()
         {
             if (interstitial.IsLoaded())
