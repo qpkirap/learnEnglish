@@ -1,16 +1,21 @@
 ﻿using System;
+using Unity.Collections;
+using Unity.Entities;
 using UnityEngine;
 using YandexMobileAds;
 using YandexMobileAds.Base;
 
 namespace Game.Ads
 {
-    public class AdsController : MonoBehaviour
+    [GenerateAuthoringComponent]
+    public class AdsController : IComponentData
     {
-        private const string idDemo = "demo-rewarded-yandex";
-        private const string id = "R-M-2265338-2";
+        [ReadOnly]
+        public string idDemo = "demo-rewarded-yandex";
+        [ReadOnly]
+        public string id = "R-M-2265338-2";
 
-        private Interstitial interstitial;
+        public Interstitial interstitial;
         
         private void Awake()
         {
@@ -44,9 +49,7 @@ namespace Game.Ads
 
         private void InterstitialOnOnReturnedToApplication(object sender, EventArgs e)
         {
-            print("Rerurn post ads");
-            
-            interstitial?.Destroy();
+           interstitial?.Destroy();
             
             PrepareInterstitial();
         }
