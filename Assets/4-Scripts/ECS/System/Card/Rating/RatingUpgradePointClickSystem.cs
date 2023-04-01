@@ -1,50 +1,53 @@
 ﻿using Game.ECS_UI.Components;
 using Game.ECS.Components;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Game.ECS.System
 {
     [UpdateAfter(typeof(FirebaseLeaderPointClickUpdateSystem))]
     public partial class RatingUpgradePointClickSystem : UpdateSystem
     {
-        private static GameState gameState;
-        private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
+        private UICanvasController canvas;
         
-        protected override void OnCreate()
-        {
-            _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
-        }
-
         protected override void OnUpdate()
         {
             if (!HasSingleton<GameState>()) return;
-
-            if (gameState == null)
+            
+            Entities.WithAll<ClickNextButtonTag, InstanceTag>().WithNone<RatingPointClickTag>().ForEach((Entity e) =>
             {
                 var gameStateEntity = GetSingletonEntity<GameState>();
-                gameState = EntityManager.GetComponentData<GameState>(gameStateEntity);
-            }
-            
-            if (gameState == null) return;
-
-            var ecb = _entityCommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
-
-            Entities.WithAll<ClickNextButtonTag, InstanceTag>().WithNone<RatingPointClickTag>().ForEach((Entity e, int entityInQueryIndex) =>
-            {
-                gameState.UserState.UpgradePointClick();
+                var gameState = EntityManager.GetComponentData<GameState>(gameStateEntity);
                 
-                ecb.AddComponent(entityInQueryIndex, e, new RatingPointClickTag());
-            }).WithoutBurst().ScheduleParallel();
+                gameState.UserState.UpgradePointClick();
+
+                EntityManager.AddComponentData(e, new RatingPointClickTag());
+                
+                Debug.Log("UpdatePointClick");
+                
+            }).WithStructuralChanges().WithoutBurst().Run();
+
+            var canvas = GetCanvas();
             
-            if (!HasSingleton<LeaderBoardController>()) return;
+            if (canvas == null) return;
             
-            Entities.WithAll<LeaderBoardController>().ForEach((LeaderBoardController controller) =>
+            Entities.WithAll<GameState>().ForEach((GameState gameState) =>
             {
-                controller.currentClickPoint.text = gameState.UserState.PointClick.ToString();
-                controller.currentNick.text = gameState.UserState.Nick ?? string.Empty;
+                canvas.LeaderBoard.currentClickPoint.text = gameState.UserState.PointClick.ToString();
+                canvas.LeaderBoard.currentNick.text = gameState.UserState.Nick ?? string.Empty;
             }).WithoutBurst().Run();
-            
-            //_entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);
+        }
+        
+        private UICanvasController GetCanvas()
+        {
+            if (canvas != null) return this.canvas;
+
+            Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
+            {
+                canvas = canvasController;
+            }).WithoutBurst().Run();
+
+            return canvas;
         }
     }
 }

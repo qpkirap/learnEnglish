@@ -18,6 +18,7 @@ namespace Game.ECS.System
         private static DatabaseReference root;
 
         private Entity timerUpdateEntity;
+        private UICanvasController canvas;
 
         protected override void OnCreate()
         {
@@ -121,15 +122,14 @@ namespace Game.ECS.System
             var nick = data != null && data.Any() ? data.First().nick : $"!not found";
             var point = data != null && data.Any() ? data.First().pointClick : 0;
             
-            if (!HasSingleton<LeaderBoardController>()) return;
+            var canvas = GetCanvas();
+            
+            if (canvas == null) return;
 
-            Entities.WithAll<LeaderBoardController>().ForEach((LeaderBoardController controller) =>
+            Entities.WithAll<GameState>().ForEach((GameState gameState) =>
             {
-                if (controller != null)
-                {
-                    controller.leaderText.text = $"{nick}";
-                    controller.leaderPoint.text = $"{point.ToPrettyString()}";
-                }
+                canvas.LeaderBoard.leaderText.text = $"{nick}";
+                canvas.LeaderBoard.leaderPoint.text = $"{point.ToPrettyString()}";
             }).WithoutBurst().Run();
         }
 
@@ -212,6 +212,18 @@ namespace Game.ECS.System
 
                 return TransactionResult.Success(mutableData);
             });
+        }
+        
+        private UICanvasController GetCanvas()
+        {
+            if (canvas != null) return this.canvas;
+
+            Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
+            {
+                canvas = canvasController;
+            }).WithoutBurst().Run();
+
+            return canvas;
         }
     }
 

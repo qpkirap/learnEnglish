@@ -1,10 +1,9 @@
 ﻿using TMPro;
-using Unity.Entities;
+using UnityEngine;
 
 namespace Game.ECS_UI.Components
 {
-    [GenerateAuthoringComponent]
-    public class LeaderBoardController : IComponentData
+    public class LeaderBoardController : MonoBehaviour
     {
         public TMP_Text currentClickPoint;
         public TMP_Text leaderText;
