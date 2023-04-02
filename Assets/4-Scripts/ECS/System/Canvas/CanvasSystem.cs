@@ -1,4 +1,6 @@
+using Game.Ads;
 using Game.ECS_UI.Components;
+using Game.ECS_UI.Components.AdsCanvas;
 using Unity.Entities;
 
 namespace Game.ECS.System
@@ -6,20 +8,69 @@ namespace Game.ECS.System
     public partial class CanvasSystem : UpdateSystem
     {
         private UICanvasController canvas;
+        private Entity canvasE;
 
         protected override void OnUpdate()
         {
-            if(GetCanvas() == null) return;
+            if (GetCanvas(out var e) == null) return;
+
+            //Клик по лидерам
+            Entities.WithAll<LeaderBoardClickTag>().ForEach((Entity e) =>
+            {
+                var canvas = GetCanvas(out var cE);
+                canvas.adsCanvas.Activate(e, EntityManager);
+
+                EntityManager.RemoveComponent<LeaderBoardClickTag>(e);
+                
+            }).WithStructuralChanges().Run();
             
+            //если нажали закрыть рекламный канвас
+            Entities.WithAll<CloseAdsCanvasTag>().ForEach((Entity e) =>
+            {
+                EntityManager.RemoveComponent<CloseAdsCanvasTag>(e);
+
+            }).WithStructuralChanges().Run();
             
+            //нажали просмотреть рекламу
+            Entities.WithAll<TryAdsViewTag>().ForEach((Entity e) =>
+            {
+                if (!HasSingleton<AdsController>()) return;
+
+                var adsE = GetSingletonEntity<AdsController>();
+                var ads = EntityManager.GetComponentData<AdsController>(adsE);
+                
+                var c = GetCanvas(out var cE);
+                
+                ads.InjectCanvas(cE, EntityManager);
+
+                ads.ShowInterstitial();
+
+                c.adsCanvas.Disable();
+
+                EntityManager.RemoveComponent<TryAdsViewTag>(e);
+
+            }).WithStructuralChanges().Run();
+            
+            //просмотрели удачно рекламу. Показать таблицу лидеров
+            Entities.WithAll<AdsCompletedTag>().ForEach((Entity e) =>
+            {
+                EntityManager.RemoveComponent<AdsCompletedTag>(e);
+
+                var can = GetCanvas(out var ent);
+                
+            }).WithStructuralChanges().Run();
         }
         
-        private UICanvasController GetCanvas()
+        private UICanvasController GetCanvas(out Entity entity)
         {
+            entity = canvasE;
+            
             if (canvas != null) return this.canvas;
 
             Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
             {
+                canvasE = e;
+                
                 canvas = canvasController;
             }).WithoutBurst().Run();
 

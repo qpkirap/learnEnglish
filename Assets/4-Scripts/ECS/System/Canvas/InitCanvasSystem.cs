@@ -18,6 +18,8 @@ namespace Game.ECS.System
             var c = GetCanvas(out var e);
             
             c.LeaderBoard.Inject(e);
+
+            isInject = true;
         }
         
         private UICanvasController GetCanvas(out Entity entity)

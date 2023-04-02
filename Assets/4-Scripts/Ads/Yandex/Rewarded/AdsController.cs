@@ -7,8 +7,7 @@ using YandexMobileAds.Base;
 
 namespace Game.Ads
 {
-    [GenerateAuthoringComponent]
-    public class AdsController : IComponentData
+    public class AdsController : MonoBehaviour, IComponentData
     {
         [ReadOnly]
         public string idDemo = "demo-rewarded-yandex";
@@ -16,8 +15,10 @@ namespace Game.Ads
         public string id = "R-M-2265338-2";
 
         public Interstitial interstitial;
-        
-        private void Awake()
+        public Entity entity;
+        public EntityManager manager;
+
+        public void Awake()
         {
             MobileAds.SetUserConsent(true);
 
@@ -29,6 +30,12 @@ namespace Game.Ads
             interstitial = new Interstitial(id);
             AdRequest request = new AdRequest.Builder().Build();
             interstitial.LoadAd(request);
+        }
+
+        public void InjectCanvas(Entity e, EntityManager manager)
+        {
+            this.entity = e;
+            this.manager = manager;
         }
 
         public void ShowInterstitial()
@@ -49,7 +56,12 @@ namespace Game.Ads
 
         private void InterstitialOnOnReturnedToApplication(object sender, EventArgs e)
         {
-           interstitial?.Destroy();
+            if (entity != Entity.Null)
+            {
+                manager.AddComponentData(entity, new AdsCompletedTag());
+            }
+            
+            interstitial?.Destroy();
             
             PrepareInterstitial();
         }
@@ -70,9 +82,13 @@ namespace Game.Ads
             MonoBehaviour.print("HandleImpression event received with data: " + data);
         }
         
-        private void OnDestroy()
+        public void OnDestroy()
         {
             interstitial?.Destroy();
         }
+    }
+
+    public struct AdsCompletedTag : IComponentData
+    {
     }
 }

@@ -10,5 +10,6 @@ namespace Game.ECS_UI.Components
         public RectTransform CardRoot;
         public LeaderBoardController LeaderBoard;
         public LeaderCanvas LeaderCanvas;
+        public AdsCanvas.AdsCanvas adsCanvas;
     }
 }
