@@ -536,6 +536,7 @@ MonoBehaviour:
   CardRoot: {fileID: 1895218263}
   LeaderBoard: {fileID: 608863649}
   LeaderCanvas: {fileID: 1412720581}
+  adsCanvas: {fileID: 2137820723}
 --- !u!114 &132112529
 MonoBehaviour:
   m_ObjectHideFlags: 0

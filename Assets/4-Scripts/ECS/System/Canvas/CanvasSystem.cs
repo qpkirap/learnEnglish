@@ -2,6 +2,7 @@ using Game.Ads;
 using Game.ECS_UI.Components;
 using Game.ECS_UI.Components.AdsCanvas;
 using Unity.Entities;
+using UnityEngine;
 
 namespace Game.ECS.System
 {
@@ -15,10 +16,19 @@ namespace Game.ECS.System
             if (GetCanvas(out var e) == null) return;
 
             //Клик по лидерам
-            Entities.WithAll<LeaderBoardClickTag>().ForEach((Entity e) =>
+            Entities.WithAll<LeaderBoardClickTag>().ForEach(() =>
             {
                 var canvas = GetCanvas(out var cE);
-                canvas.adsCanvas.Activate(e, EntityManager);
+                
+                Debug.Log($"canvas {canvas}");
+                
+                if (!HasSingleton<AdsController>()) return;
+
+                var adsE = GetSingletonEntity<AdsController>();
+
+                var ads = EntityManager.GetComponentData<AdsController>(adsE);
+                
+                canvas?.adsCanvas.Activate(cE, EntityManager);
 
                 EntityManager.RemoveComponent<LeaderBoardClickTag>(e);
                 
@@ -45,7 +55,7 @@ namespace Game.ECS.System
 
                 ads.ShowInterstitial();
 
-                c.adsCanvas.Disable();
+                c?.adsCanvas.Disable();
 
                 EntityManager.RemoveComponent<TryAdsViewTag>(e);
 
