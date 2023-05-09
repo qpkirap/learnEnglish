@@ -2,6 +2,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.Serialization;
 using YandexMobileAds;
 using YandexMobileAds.Base;
 
@@ -12,24 +13,41 @@ namespace Game.Ads
         [ReadOnly]
         public string idDemo = "demo-rewarded-yandex";
         [ReadOnly]
-        public string id = "R-M-2265338-2";
+        public string idRewardAds = "R-M-2265338-2"; //видео с вознагрождением
+        [ReadOnly]
+        public string idInterstitionalAds = "R-M-2265338-3"; //полноэкранная реклама
 
-        public Interstitial interstitial;
+        public Interstitial interstitialAd; //полноэкранная реклама
+        public RewardedAd rewardedAd;
         public Entity entity;
         public EntityManager manager;
+        
+        //показывает только RewardedAd , Interstitial - почему то не работает 
 
         public void Awake()
         {
             MobileAds.SetUserConsent(true);
 
-            PrepareInterstitial();
+            PrepareInterstitialAds();
+            PrepareRewardsAds();
         }
 
-        private void PrepareInterstitial()
+        private void PrepareInterstitialAds()
         {
-            interstitial = new Interstitial(id);
+            Debug.Log("PrepareInterstitialAds");
+            
+            interstitialAd = new Interstitial(idInterstitionalAds);
             AdRequest request = new AdRequest.Builder().Build();
-            interstitial.LoadAd(request);
+            interstitialAd.LoadAd(request);
+        }
+
+        private void PrepareRewardsAds()
+        {
+            Debug.Log("PrepareRewardsAds");
+            
+            rewardedAd = new RewardedAd(idRewardAds);
+            AdRequest request = new AdRequest.Builder().Build();
+            rewardedAd.LoadAd(request);
         }
 
         public void InjectCanvas(Entity e, EntityManager manager)
@@ -40,32 +58,56 @@ namespace Game.Ads
 
         public void ShowInterstitial()
         {
-            if (interstitial.IsLoaded())
+            if (interstitialAd.IsLoaded())
             {
-                interstitial.OnReturnedToApplication += InterstitialOnOnReturnedToApplication;
+                interstitialAd.OnReturnedToApplication += InterstitialOnOnReturnedToApplication;
                 
-                interstitial.OnLeftApplication += HandleLeftApplication;
-                interstitial.OnAdClicked += HandleAdClicked;
+                interstitialAd.OnLeftApplication += HandleLeftApplication;
+                interstitialAd.OnAdClicked += HandleAdClicked;
          
-                interstitial.OnImpression += HandleImpression;
+                interstitialAd.OnImpression += HandleImpression;
                 
-                interstitial.Show();
+                interstitialAd.Show();
             }
-            
+        }
+
+        public void ShowRewarded()
+        {
+            Debug.Log($"ShowRewarded is load = {rewardedAd.IsLoaded()}");
+
+            if (rewardedAd.IsLoaded())
+            {
+                rewardedAd.OnReturnedToApplication += RewardedOnOnReturnedToApplication;
+
+                rewardedAd.OnLeftApplication += HandleLeftApplication;
+                rewardedAd.OnAdClicked += HandleAdClicked;
+
+                rewardedAd.OnImpression += HandleImpression;
+
+                rewardedAd.Show();
+            }
+            else ErrorAds();
+        }
+        
+        private void RewardedOnOnReturnedToApplication(object sender, EventArgs e)
+        {
+            Debug.Log($"InterstitialOnOnReturnedToApplication");
         }
 
         private void InterstitialOnOnReturnedToApplication(object sender, EventArgs e)
         {
+            Debug.Log($"InterstitialOnOnReturnedToApplication");
+            
             if (entity != Entity.Null)
             {
                 manager.AddComponentData(entity, new AdsCompletedTag());
             }
             
-            interstitial?.Destroy();
+            interstitialAd?.Destroy();
             
-            PrepareInterstitial();
+            PrepareInterstitialAds();
         }
-        
+
         public void HandleLeftApplication(object sender, EventArgs args)
         {
             MonoBehaviour.print("HandleLeftApplication event received");
@@ -76,19 +118,46 @@ namespace Game.Ads
             MonoBehaviour.print("HandleAdClicked event received");
         }
 
-        public void HandleImpression(object sender, ImpressionData impressionData)
+        public void HandleImpression(object sender, ImpressionData impressionData) //после нажатия на закрытие вознаграждения попадает сюда
         {
             var data = impressionData == null ? "null" : impressionData.rawData;
             MonoBehaviour.print("HandleImpression event received with data: " + data);
+            
+            CompleteRewardAds();
+        }
+
+        private void ErrorAds()
+        {
+            if (entity != Entity.Null)
+            {
+                manager.AddComponentData(entity, new AdsErrorTag());
+            } 
+        }
+
+        private void CompleteRewardAds()
+        {
+            if (entity != Entity.Null)
+            {
+                manager.AddComponentData(entity, new AdsCompletedTag());
+            }
+            
+            rewardedAd?.Destroy();
+            
+            PrepareInterstitialAds();
         }
         
         public void OnDestroy()
         {
-            interstitial?.Destroy();
+            interstitialAd?.Destroy();
+            rewardedAd?.Destroy();
         }
     }
 
     public struct AdsCompletedTag : IComponentData
+    {
+    }
+    
+    public struct AdsErrorTag : IComponentData
     {
     }
 }

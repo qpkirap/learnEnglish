@@ -24,10 +24,6 @@ namespace Game.ECS.System
                 
                 if (!HasSingleton<AdsController>()) return;
 
-                var adsE = GetSingletonEntity<AdsController>();
-
-                var ads = EntityManager.GetComponentData<AdsController>(adsE);
-                
                 canvas?.adsCanvas.Activate(cE, EntityManager);
 
                 EntityManager.RemoveComponent<LeaderBoardClickTag>(e);
@@ -53,11 +49,13 @@ namespace Game.ECS.System
                 
                 ads.InjectCanvas(cE, EntityManager);
 
-                ads.ShowInterstitial();
+                ads.ShowRewarded();
 
                 c?.adsCanvas.Disable();
 
                 EntityManager.RemoveComponent<TryAdsViewTag>(e);
+                
+                Debug.Log($"Показали рекламу");
 
             }).WithStructuralChanges().Run();
             
@@ -67,6 +65,19 @@ namespace Game.ECS.System
                 EntityManager.RemoveComponent<AdsCompletedTag>(e);
 
                 var can = GetCanvas(out var ent);
+                
+                Debug.Log($"Завершили показ рекламы");
+                
+            }).WithStructuralChanges().Run();
+            
+            //При просмотре рекламы ошибка. Удаляемся назад
+            Entities.WithAll<AdsErrorTag>().ForEach((Entity e) =>
+            {
+                EntityManager.RemoveComponent<AdsErrorTag>(e);
+
+                var can = GetCanvas(out var ent);
+                
+                Debug.Log($"Ошибка рекламы");
                 
             }).WithStructuralChanges().Run();
         }
