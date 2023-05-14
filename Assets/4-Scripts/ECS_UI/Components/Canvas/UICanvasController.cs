@@ -11,5 +11,6 @@ namespace Game.ECS_UI.Components
         public LeaderBoardController LeaderBoard;
         public LeaderCanvas LeaderCanvas;
         public AdsCanvas.AdsCanvas adsCanvas;
+        public UIRegistrationPanel registrationPanel;
     }
 }

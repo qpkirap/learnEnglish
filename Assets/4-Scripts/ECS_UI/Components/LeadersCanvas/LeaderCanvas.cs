@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Game.ECS.System;
 using UniRx;
 using UnityEngine;
@@ -28,10 +29,10 @@ namespace Game.ECS_UI.Components
             
             if (leaders == null) return;
 
+            leaders = leaders.OrderByDescending(x => x.pointClick).ToList();
+
             foreach (var leader in leaders)
             {
-                if (leader == null) continue;
-                
                 var item = WarmItem();
                 
                 item.Inject(leader.nick, leader.pointClick.ToPrettyString());

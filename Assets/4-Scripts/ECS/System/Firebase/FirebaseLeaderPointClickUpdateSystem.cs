@@ -49,7 +49,7 @@ namespace Game.ECS.System
             {
                 root.ValueChanged -= UpdateViewScoreLeaders;
             }
-            if(refLeaderboards != null)
+            if (refLeaderboards != null)
             {
                 refLeaderboards.ValueChanged -= UpdateViewScoreLeaders;
             }
@@ -235,7 +235,7 @@ namespace Game.ECS.System
     {
     }
 
-    public class LeaderData
+    public struct LeaderData
     {
         public readonly long pointClick;
         public readonly string id;

@@ -5,20 +5,18 @@ namespace Util
     public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         private static T instance;
-        public static bool IS_EXITING = false;
-        protected bool isExiting => IS_EXITING;
-        
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void OnRuntimeStartSingleton()
         {
-            IS_EXITING = false;
+            //IS_EXITING = false;
         }
         
         public static T Instance
         {
             get
             {
-                if (instance == null && !IS_EXITING)
+                if (instance == null)
                 {
                     instance = (T) FindObjectOfType(typeof(T));
 
@@ -69,7 +67,7 @@ namespace Util
         
         private void OnApplicationQuit()
         {
-            IS_EXITING = true;
+            //IS_EXITING = true;
         }
         
         private static void DebugLogFormat(string content, params object[] parameters)

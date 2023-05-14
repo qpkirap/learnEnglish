@@ -7,5 +7,6 @@
         public const string firebaseIdKey = "fir_id";
         public const string pointClickKey = "point_clck";
         public const string nickKey = "nick";
+        public const string isRegComplete = "is_reg_complete";
     }
 }

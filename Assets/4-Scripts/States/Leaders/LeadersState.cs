@@ -10,6 +10,8 @@ namespace Game.Leaders
 
         public void UpdateLeaders(List<LeaderData> data = null)
         {
+            if (LeaderDatas != null && data == null) return;
+            
             this.LeaderDatas = data?.ToList();
         }
     }

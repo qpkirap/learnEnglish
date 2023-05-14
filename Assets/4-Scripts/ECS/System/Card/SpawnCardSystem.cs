@@ -22,7 +22,7 @@ namespace Game.ECS.System.SpawnCard
         {
             if (!HasSingleton<InitAllFabricsTag>()) return;
             if (!HasSingleton<EntityDicElementsData>()) return;
-            if (!HasSingleton<FirebaseAppReadyTag>()) return;
+            //if (!HasSingleton<FirebaseAppReadyTag>()) return; регистрация в фб
 
             int countCard = 0;
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Net.Mail;
 using System.Text.RegularExpressions;
 using DG.Tweening;
 using Game.ECS.System;
@@ -9,6 +8,7 @@ using UniRx;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.ECS_UI.Components
 {
@@ -18,6 +18,7 @@ namespace Game.ECS_UI.Components
         [SerializeField] private TMP_InputField passField;
         [SerializeField] private TMP_InputField nickField;
         [SerializeField] private RegistrationButton nextButton;
+        [SerializeField] private Button notNowButton;
 
         [Space] 
         [SerializeField] private TMP_Text passTitleText;
@@ -29,27 +30,54 @@ namespace Game.ECS_UI.Components
         private string saveNick;
 
         private Tween effect;
+        private CompositeDisposable disp = new();
 
         private static EntityManager EntityManager => World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        private void Awake()
+        public void InjectActivation()
         {
+            InitSubscription();
+            
+            gameObject.SetActive(true);
+        }
+
+        public void Disable()
+        {
+            gameObject.SetActive(false);
+        }
+
+        private void InitSubscription()
+        {
+            if (disp.Count > 0) return;
+            
+            nextButton.OnClick.Subscribe(_ => TryRegistration()).AddTo(disp);
+            notNowButton.OnClickAsObservable().Subscribe(_ => NotNowRegistration()).AddTo(disp);
+            
             emailField.ObserveEveryValueChanged(x => x.text).Subscribe(x =>
             {
                 saveEmail = x;
-            }).AddTo(this);
+            }).AddTo(disp);
             
             passField.ObserveEveryValueChanged(x => x.text).Subscribe(x =>
             {
                 savePass = x;
-            }).AddTo(this);
+            }).AddTo(disp);
 
             nickField.ObserveEveryValueChanged(x => x.text).Subscribe(x =>
             {
                 saveNick = x;
-            }).AddTo(this);
+            }).AddTo(disp);
+        }
 
-            nextButton.OnClick.Subscribe(x=> TryRegistration()).AddTo(this);
+        private void NotNowRegistration()
+        {
+            if (entity != Entity.Null || EntityManager.HasComponent<AsyncTag>(entity)) return;
+
+            var e = EntityManager.CreateEntity();
+
+            EntityManager.AddComponentData(e, new FirebaseRegNotNowTag());
+            
+            Disable();
         }
 
         private void TryRegistration()
@@ -119,6 +147,8 @@ namespace Game.ECS_UI.Components
                 };
 
                 EntityManager.AddComponentData(entity, data);
+                
+                notNowButton.gameObject.SetActive(false); //мне просто влом делать хорошо тут
             }
         }
 

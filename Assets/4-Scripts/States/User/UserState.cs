@@ -15,6 +15,7 @@ namespace Game
         private string email;
         private string pass;
         private string nick;
+        private bool isRegisteredComplete;
 
         public string FirebaseId => firebaseId;
         
@@ -24,6 +25,7 @@ namespace Game
 
         public string Pass => pass;
         public string Nick => nick;
+        public bool IsRegisteredComplete => isRegisteredComplete;
 
         public void SetData(string idFirebase, FixedString512Bytes email, FixedString512Bytes pass,  FixedString512Bytes nick)
         {
@@ -46,6 +48,7 @@ namespace Game
             ES3.Save(SaveKeys.firebaseIdKey, firebaseId);
             ES3.Save(SaveKeys.pointClickKey, pointClick);
             ES3.Save(SaveKeys.nickKey, nick);
+            ES3.Save(SaveKeys.isRegComplete, isRegisteredComplete);
         }
 
         public void LoadSave()
@@ -53,8 +56,9 @@ namespace Game
             email = ES3.LoadString(SaveKeys.emailKey, string.Empty);
             pass = ES3.LoadString(SaveKeys.passKey, string.Empty);
             firebaseId = ES3.LoadString(SaveKeys.firebaseIdKey, String.Empty);
-            nick = ES3.LoadString(SaveKeys.nickKey, $"not reg");
+            nick = ES3.LoadString(SaveKeys.nickKey, $"NewUser");
             pointClick = ES3.Load<long>(SaveKeys.pointClickKey, 0);
+            isRegisteredComplete = ES3.Load<bool>(SaveKeys.isRegComplete, false);
         }
         
     }
