@@ -17,6 +17,8 @@ namespace Game.ECS.System
     [UpdateAfter(typeof(InitSystem))]
     public partial class FirebaseRegistrationSystem : InitSystemBase
     {
+        private static LazyInject<GameState> gameState = new();
+
         private DatabaseReference reference;
         
         private UICanvasController canvas;
@@ -78,19 +80,11 @@ namespace Game.ECS.System
                 .WithNone<AsyncTag, FirebaseRegistrationCompleteTag>()
                 .ForEach((Entity appEntity) =>
                 {
-                    var stateEntity = GetSingletonEntity<GameState>();
-
-                    if (stateEntity == Entity.Null) return;
-
-                    var dataState = EntityManager.GetComponentData<GameState>(stateEntity);
-
-                    if (dataState == null) return;
-
-                    if (!string.IsNullOrEmpty(dataState.UserState.Email))
+                    if (!string.IsNullOrEmpty(gameState.Value.UserState.Email))
                     {
                         EntityManager.AddComponentData(appEntity, new AsyncTag());
 
-                        SignInUserAsync(appEntity, dataState.UserState.Email, dataState.UserState.Pass);
+                        SignInUserAsync(appEntity, gameState.Value.UserState.Email, gameState.Value.UserState.Pass);
 
                         return;
 
@@ -319,17 +313,13 @@ namespace Game.ECS.System
                     // Firebase user has been created.
                     Firebase.Auth.FirebaseUser newUser = task.Result;
                     
-                    var stateEntity = GetSingletonEntity<GameState>();
-
-                    if (stateEntity == Entity.Null) return;
-
-                    var dataState = EntityManager.GetComponentData<GameState>(stateEntity);
+                    if (gameState.Value == null) return;
 
                     isInit = true;
 
-                    dataState.UserState.SetData(newUser.UserId, email, pass, nick);
+                    gameState.Value.UserState.SetData(newUser.UserId, email, pass, nick);
 
-                    dataState.UserState.SaveData();
+                    gameState.Value.UserState.SaveData();
 
                     if (entity != Entity.Null)
                     {
@@ -371,15 +361,11 @@ namespace Game.ECS.System
 
         private void DataBaseUpdateUser() {
            
-            var stateEntity = GetSingletonEntity<GameState>();
+            if (gameState.Value == null) return;
 
-            if (stateEntity == Entity.Null) return;
+            string json = (gameState.Value.UserState.ToJson());
 
-            var dataState = EntityManager.GetComponentData<GameState>(stateEntity);
-            
-            string json = (dataState.UserState.ToJson());
-
-            var handle = reference.Child("users").Child(dataState.UserState.FirebaseId).SetRawJsonValueAsync(json)
+            var handle = reference.Child("users").Child(gameState.Value.UserState.FirebaseId).SetRawJsonValueAsync(json)
                 .ContinueWith(
                     task =>
                     {

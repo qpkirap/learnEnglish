@@ -17,9 +17,13 @@ namespace Game.ECS_UI.Components
         private ObjectPool<LeaderItem> pool;
 
         private List<LeaderItem> spawnedItems = new();
+        private readonly CompositeDisposable disp = new();
 
         public void InjectActivation(List<LeaderData> leaders)
         {
+            pool ??= new ObjectPool<LeaderItem>(GetItem);
+            InitSubscription();
+            
             Disable();
             
             if (leaders == null) return;
@@ -62,22 +66,17 @@ namespace Game.ECS_UI.Components
             
             spawnedItems.Clear();
         }
-        
-        private void Awake()
-        {
-            pool = new ObjectPool<LeaderItem>(GetItem);
-
-            InitSubscription();
-        }
 
         private void InitSubscription()
         {
+            if (disp.Count > 0) return;
+            
             closeButton.OnClickAsObservable().Subscribe(x =>
             {
                 gameObject.SetActive(false);
                 
                 Disable();
-            }).AddTo(this);
+            }).AddTo(disp);
         }
         
         private LeaderItem GetItem()
@@ -93,7 +92,8 @@ namespace Game.ECS_UI.Components
         {
             Disable();
             
-            pool.Dispose();
+            pool?.Dispose();
+            disp?.Dispose();
         }
     }
 }

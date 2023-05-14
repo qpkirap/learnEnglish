@@ -11,6 +11,8 @@ namespace Game.ECS.System
     [UpdateAfter(typeof(NextCardSystem))]
     public partial class FirebaseLeaderPointClickUpdateSystem : UpdateSystem
     {
+        private static LazyInject<GameState> gameState = new();
+
         private const int MaxScores = 20;
         private const float UpdateCycleTime = 60;
 
@@ -63,13 +65,9 @@ namespace Game.ECS.System
         protected override void OnUpdate()
         {
             //обновляеть данные в бд
-            if (!HasSingleton<GameState>()) return;
+            if (gameState.Value == null) return;
             if (!HasSingleton<TimerPointClickTag>()) return;
             if (!HasSingleton<FirebaseRegistrationCompleteTag>()) return;
-            
-            var stateEntity = GetSingletonEntity<GameState>();
-
-            var data = EntityManager.GetComponentData<GameState>(stateEntity);
 
             Entities.WithAll<TimerPointClickTag, Timer>().ForEach((Entity e, ref Timer timer) =>
             {
@@ -80,7 +78,7 @@ namespace Game.ECS.System
                     if(refLeaderboards == null) return;
                 }
 
-                TryAddOrUpdateScoreLeaders(data.UserState.FirebaseId, data.UserState.Nick, data.UserState.PointClick, refLeaderboards);
+                TryAddOrUpdateScoreLeaders(gameState.Value.UserState.FirebaseId, gameState.Value.UserState.Nick, gameState.Value.UserState.PointClick, refLeaderboards);
 
                 //перезапуск таймера
                 timer.TimeLeft = UpdateCycleTime;
@@ -113,8 +111,9 @@ namespace Game.ECS.System
 
                 convert.Add(new LeaderData(score, id, nick));
             }
-            
+
             UpdateUI(convert);
+            UpdateState(convert);
         }
 
         private void UpdateUI(List<LeaderData> data = null)
@@ -125,12 +124,14 @@ namespace Game.ECS.System
             var canvas = GetCanvas();
             
             if (canvas == null) return;
+            
+            canvas.LeaderBoard.leaderText.text = $"{nick}";
+            canvas.LeaderBoard.leaderPoint.text = $"{point.ToPrettyString()}";
+        }
 
-            Entities.WithAll<GameState>().ForEach((GameState gameState) =>
-            {
-                canvas.LeaderBoard.leaderText.text = $"{nick}";
-                canvas.LeaderBoard.leaderPoint.text = $"{point.ToPrettyString()}";
-            }).WithoutBurst().Run();
+        private void UpdateState(List<LeaderData> data = null)
+        {
+            gameState.Value?.LeadersState.UpdateLeaders(data);
         }
 
         private void TryAddOrUpdateScoreLeaders(

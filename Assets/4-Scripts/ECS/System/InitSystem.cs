@@ -1,6 +1,6 @@
-﻿using Game;
-using Game.Ads;
+﻿using Game.CustomPool;
 using Game.ECS.Components;
+using JohanPolosn.UnityInjector;
 using Unity.Entities;
 using Unity.Scenes;
 using UnityEngine;
@@ -9,9 +9,13 @@ namespace Game.ECS.System
 {
     public partial class InitSystem : InitSystemBase
     {
+        private GameState gameState;
+        
         protected override void OnStartRunning()
         {
             Application.targetFrameRate = 60;
+
+            GlobalInjector.singleton ??= new DependencyInjector();
 
             var factorySingleton = GetSingletonEntity<FactoriesCardData>();
             var factoryData = EntityManager.GetComponentData<FactoriesCardData>(factorySingleton);
@@ -22,18 +26,14 @@ namespace Game.ECS.System
 
         private void CreateGameState()
         {
-            var state = new GameState();
+            gameState = new GameState();
             
-            state.LoadSave();
-
-            var entityState = EntityManager.CreateEntity();
-
-            EntityManager.AddComponentData(entityState, state);
+            gameState.LoadSave();
         }
 
         protected override void OnUpdate()
         {
-            if (!HasSingleton<InitAllFabricsTag>() && IsLoadFabrics())
+            if (!HasSingleton<InitAllFabricsTag>() && IsLoadFabrics() && PoolManager.Instance != null)
             {
                 Entities.WithAll<FactoriesCardData>().WithNone<InitAllFabricsTag>().ForEach((ref Entity e) =>
                 {

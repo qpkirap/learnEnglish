@@ -2,7 +2,6 @@
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using UnityEngine.Serialization;
 using YandexMobileAds;
 using YandexMobileAds.Base;
 
@@ -75,6 +74,12 @@ namespace Game.Ads
         {
             Debug.Log($"ShowRewarded is load = {rewardedAd.IsLoaded()}");
 
+#if UNITY_EDITOR
+            CompleteRewardAds();
+            
+            return;
+#endif
+
             if (rewardedAd.IsLoaded())
             {
                 rewardedAd.OnReturnedToApplication += RewardedOnOnReturnedToApplication;
@@ -143,7 +148,7 @@ namespace Game.Ads
             
             rewardedAd?.Destroy();
             
-            PrepareInterstitialAds();
+            PrepareRewardsAds();
         }
         
         public void OnDestroy()

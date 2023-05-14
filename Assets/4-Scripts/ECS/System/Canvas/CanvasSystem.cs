@@ -11,6 +11,8 @@ namespace Game.ECS.System
         private UICanvasController canvas;
         private Entity canvasE;
 
+        private static LazyInject<GameState> gameState = new();
+
         protected override void OnUpdate()
         {
             if (GetCanvas(out var e) == null) return;
@@ -65,8 +67,13 @@ namespace Game.ECS.System
                 EntityManager.RemoveComponent<AdsCompletedTag>(e);
 
                 var can = GetCanvas(out var ent);
+
+                if (gameState.Value != null)
+                {
+                    can.LeaderCanvas.InjectActivation(gameState.Value.LeadersState.LeaderDatas);
+                }
                 
-                Debug.Log($"Завершили показ рекламы");
+                Debug.Log($"Завершили показ рекламы is null game state {gameState.Value == null}!!");
                 
             }).WithStructuralChanges().Run();
             

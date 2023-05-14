@@ -8,18 +8,16 @@ namespace Game.ECS.System
     [UpdateAfter(typeof(FirebaseLeaderPointClickUpdateSystem))]
     public partial class RatingUpgradePointClickSystem : UpdateSystem
     {
+        private static LazyInject<GameState> gameState = new();
         private UICanvasController canvas;
         
         protected override void OnUpdate()
         {
-            if (!HasSingleton<GameState>()) return;
+            if (gameState.Value == null) return;
             
             Entities.WithAll<ClickNextButtonTag, InstanceTag>().WithNone<RatingPointClickTag>().ForEach((Entity e) =>
             {
-                var gameStateEntity = GetSingletonEntity<GameState>();
-                var gameState = EntityManager.GetComponentData<GameState>(gameStateEntity);
-                
-                gameState.UserState.UpgradePointClick();
+                gameState.Value.UserState.UpgradePointClick();
 
                 EntityManager.AddComponentData(e, new RatingPointClickTag());
                 
@@ -31,11 +29,8 @@ namespace Game.ECS.System
             
             if (canvas == null) return;
             
-            Entities.WithAll<GameState>().ForEach((GameState gameState) =>
-            {
-                canvas.LeaderBoard.currentClickPoint.text = gameState.UserState.PointClick.ToString();
-                canvas.LeaderBoard.currentNick.text = gameState.UserState.Nick ?? string.Empty;
-            }).WithoutBurst().Run();
+            canvas.LeaderBoard.currentClickPoint.text = gameState.Value.UserState.PointClick.ToString();
+            canvas.LeaderBoard.currentNick.text = gameState.Value.UserState.Nick ?? string.Empty;
         }
         
         private UICanvasController GetCanvas()
