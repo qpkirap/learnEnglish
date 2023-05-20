@@ -40,6 +40,9 @@ namespace Game.ECS_UI.Components
             autoNextToggle.OnValueChangedAsObservable().Subscribe(SwitchAutoNext).AddTo(this);
             bgButton.OnClickAsObservable().Subscribe(x=> OnClickBgButton()).AddTo(this);
             engSpeechToggle.OnValueChangedAsObservable().Subscribe(SwitchEngSpeech).AddTo(this);
+            
+            gameState.Value.SettingsState.SwitchEngSpeech(engSpeechToggle.isOn);
+            gameState.Value.SettingsState.SwitchAutoNextCard(autoNextToggle.isOn);
         }
 
         private void Update()
@@ -114,7 +117,7 @@ namespace Game.ECS_UI.Components
         
         private void SwitchEngSpeech(bool isActive)
         {
-            gameState.Value?.SettingsState.SwitchAutoNextCard(isActive);
+            gameState.Value?.SettingsState.SwitchEngSpeech(isActive);
         }
         
         private enum State
