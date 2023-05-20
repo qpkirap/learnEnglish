@@ -1,4 +1,5 @@
 ﻿using Game.Leaders;
+using Game.Settings;
 using JohanPolosn.UnityInjector;
 
 namespace Game
@@ -7,9 +8,11 @@ namespace Game
     {
         private readonly UserState userState = new();
         private readonly LeadersState leadersState = new();
+        private readonly SettingsState settingsState = new();
 
         public UserState UserState => userState;
         public LeadersState LeadersState => leadersState;
+        public SettingsState SettingsState => settingsState;
 
         public void LoadSave()
         {

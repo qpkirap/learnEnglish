@@ -12,7 +12,8 @@ namespace Game.ECS.System
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
 
         private static TextToSpeech textToSpeechSystem;
-        
+        private static LazyInject<GameState> gameState = new();
+
         protected override void OnCreate()
         {
             _entityCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
@@ -22,6 +23,8 @@ namespace Game.ECS.System
 
         protected override void OnUpdate()
         {
+            if (gameState.Value == null) return;
+            
             var ecb = _entityCommandBufferSystem.CreateCommandBuffer();
             
             Entities
@@ -34,7 +37,7 @@ namespace Game.ECS.System
 
                 ecb.AddComponent(entity, new UpdateWordCardTag());
                 
-                textToSpeechSystem.StartSpeak(word.En.Value);
+                if (gameState.Value.SettingsState.IsActiveEngSpeech) textToSpeechSystem.StartSpeak(word.En.Value);
 
             }).WithStructuralChanges().WithoutBurst().Run();
         }
