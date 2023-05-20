@@ -1,6 +1,7 @@
 using Game.Ads;
 using Game.ECS_UI.Components;
 using Game.ECS_UI.Components.AdsCanvas;
+using Game.ECS.Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -30,6 +31,18 @@ namespace Game.ECS.System
 
                 EntityManager.RemoveComponent<LeaderBoardClickTag>(e);
                 
+            }).WithStructuralChanges().Run();
+            
+            //клик по продолжить регистарцию
+            Entities.WithAll<LeaderBoardTryRegistrationTag>().ForEach((Entity e) =>
+            {
+                if (HasSingleton<FirebaseRegNotNowTag>())
+                {
+                    var entityNotNow = GetSingletonEntity<FirebaseRegNotNowTag>();
+
+                    EntityManager.RemoveComponent<FirebaseRegNotNowTag>(entityNotNow);
+                    EntityManager.RemoveComponent<LeaderBoardTryRegistrationTag>(e);
+                }
             }).WithStructuralChanges().Run();
             
             //если нажали закрыть рекламный канвас

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Threading;
 using Cysharp.Threading.Tasks;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
-using Game.Config;
 using Game.ECS_UI.Components;
 using Game.ECS.Components;
 using GooglePlayGames;
@@ -65,6 +63,8 @@ namespace Game.ECS.System
         {
             if (isInit || isActiveAsync || app == null) return;
             
+            if (Application.internetReachability == NetworkReachability.NotReachable) return;
+            
             if (!HasSingleton<InitAllFabricsTag>()) return;
             if (!HasSingleton<FirebaseReadyDependenciesTag>()) return;
             if (HasSingleton<FirebaseRegNotNowTag>()) return; //отложить регистрацию
@@ -78,6 +78,8 @@ namespace Game.ECS.System
                     EntityManager.AddComponentData(e, new AsyncTag());
 
                     CreateUserAsync(e, registration.email, registration.pass, registration.nick);
+                    
+                    GetCanvas()?.LeaderBoard?.SwitchState(LeaderBoardController.State.RegComplete);
 
                     //TryAuthPlayServices();
                 }).WithStructuralChanges().WithoutBurst().Run();
@@ -91,6 +93,8 @@ namespace Game.ECS.System
                     if (gameState.Value.UserState.IsRegisteredComplete)
                     {
                         EntityManager.AddComponentData(appEntity, new AsyncTag());
+
+                        GetCanvas()?.LeaderBoard?.SwitchState(LeaderBoardController.State.RegComplete);
 
                         SignInUserAsync(appEntity, gameState.Value.UserState.Email, gameState.Value.UserState.Pass);
 

@@ -24,6 +24,9 @@ namespace Game.ECS_UI.Components
         [SerializeField] private TMP_Text passTitleText;
         [SerializeField] private TMP_Text emailTitleText;
         [SerializeField] private TMP_Text nickTitleText;
+        
+        [Space]
+        [SerializeField] private LeaderBoardController leaderBoardController;
 
         private string saveEmail;
         private string savePass;
@@ -78,6 +81,8 @@ namespace Game.ECS_UI.Components
             EntityManager.AddComponentData(e, new FirebaseRegNotNowTag());
             
             Disable();
+            
+            leaderBoardController?.SwitchState(LeaderBoardController.State.NotRegistration);
         }
 
         private void TryRegistration()
