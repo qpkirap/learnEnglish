@@ -23,6 +23,7 @@ namespace Game.ECS.System
             var factorySingleton = GetSingletonEntity<FactoriesCardData>();
             var factoryData = EntityManager.GetComponentData<FactoriesCardData>(factorySingleton);
 
+            SetSleepTimeoutState(true);
             CreateGameState();
             factoryData.InitAllFabrics();
         }
@@ -68,6 +69,13 @@ namespace Game.ECS.System
 
             sceneSystem.LoadSceneAsync(gameSceneEntityData.SceneGUID,
                 new SceneSystem.LoadParameters { AutoLoad = false, Flags = SceneLoadFlags.LoadAsGOScene });
+        }
+        
+        private void SetSleepTimeoutState(bool state)
+        {
+            Screen.sleepTimeout = state
+                ? SleepTimeout.NeverSleep
+                : SleepTimeout.SystemSetting;
         }
     }
 }
