@@ -4,6 +4,7 @@ namespace Game.Settings
     {
         public bool IsAutoNextCard { get; private set; }
         public bool IsActiveEngSpeech { get; private set; }
+        public bool IsActiveRusSpeech { get; private set; }
 
         public void SwitchAutoNextCard(bool isAutoNext)
         {
@@ -13,6 +14,11 @@ namespace Game.Settings
         public void SwitchEngSpeech(bool isActive)
         {
             IsActiveEngSpeech = isActive;
+        }
+        
+        public void SwitchRusSpeech(bool isActive)
+        {
+            IsActiveRusSpeech = isActive;
         }
     }
 }

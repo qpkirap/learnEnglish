@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Game.ECS.System;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,7 @@ namespace Game.ECS_UI.Components
 
         [SerializeField] private Toggle autoNextToggle;
         [SerializeField] private Toggle engSpeechToggle;
+        [SerializeField] private Toggle rusSpeechToggle;
         
         private Vector2 fingerDownPosition;
         private Vector2 fingerUpPosition;
@@ -40,8 +42,16 @@ namespace Game.ECS_UI.Components
             autoNextToggle.OnValueChangedAsObservable().Subscribe(SwitchAutoNext).AddTo(this);
             bgButton.OnClickAsObservable().Subscribe(x=> OnClickBgButton()).AddTo(this);
             engSpeechToggle.OnValueChangedAsObservable().Subscribe(SwitchEngSpeech).AddTo(this);
-            
+            rusSpeechToggle.OnValueChangedAsObservable().Subscribe(SwitchRusSpeech).AddTo(this);
+
+            if (InitSystem.IsInitGameState.Value) Init();
+            else InitSystem.IsInitGameState.Where(x=> x).Subscribe(_ => Init()).AddTo(this);
+        }
+
+        private void Init()
+        {
             gameState.Value.SettingsState.SwitchEngSpeech(engSpeechToggle.isOn);
+            gameState.Value.SettingsState.SwitchRusSpeech(rusSpeechToggle.isOn);
             gameState.Value.SettingsState.SwitchAutoNextCard(autoNextToggle.isOn);
         }
 
@@ -118,6 +128,11 @@ namespace Game.ECS_UI.Components
         private void SwitchEngSpeech(bool isActive)
         {
             gameState.Value?.SettingsState.SwitchEngSpeech(isActive);
+        } 
+        
+        private void SwitchRusSpeech(bool isActive)
+        {
+            gameState.Value?.SettingsState.SwitchRusSpeech(isActive);
         }
         
         private enum State

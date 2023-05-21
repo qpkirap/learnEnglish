@@ -11,7 +11,7 @@ namespace Game.ECS.System
         private const float Timescale = 1f;
         
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
-        private static LazyInject<GameState> gameState = new();
+        private static readonly LazyInject<GameState> gameState = new();
 
         protected override void OnCreate()
         {
@@ -24,6 +24,9 @@ namespace Game.ECS.System
             if (!gameState.Value.SettingsState.IsAutoNextCard) return;
             
             var ecb = _entityCommandBufferSystem.CreateCommandBuffer().AsParallelWriter();
+            
+            var isActiveEngSpeech = gameState.Value.SettingsState.IsActiveEngSpeech;
+            var isActiveRusSpeech = gameState.Value.SettingsState.IsActiveRusSpeech;
 
             Entities
                 .WithAll<CardTag, InstanceTag>()
@@ -44,14 +47,24 @@ namespace Game.ECS.System
             
             Entities
                 .WithAll<CardTag, AutoNextCardTag, Timer>()
-                .WithNone<CardMoveProcess, ClickNextButtonTag>()
+                .WithNone<CardMoveProcess, ClickNextButtonTag, SpeechAllCompleteTag>()
                 .ForEach((Entity e, int entityInQueryIndex, Timer timer) =>
                 {
-                    if (timer.IsCompleted)
+                    if (timer.IsCompleted 
+                        && (!isActiveEngSpeech
+                        && !isActiveRusSpeech))
                     {
                         ecb.AddComponent(entityInQueryIndex, e, new ClickNextButtonTag());
                         ecb.RemoveComponent<Timer>(entityInQueryIndex, e);
                     }
+                }).ScheduleParallel();
+            
+            Entities
+                .WithAll<CardTag, AutoNextCardTag, SpeechAllCompleteTag>()
+                .WithNone<CardMoveProcess, ClickNextButtonTag>()
+                .ForEach((Entity e, int entityInQueryIndex) =>
+                {
+                    ecb.AddComponent(entityInQueryIndex, e, new ClickNextButtonTag());
                 }).ScheduleParallel();
 
             _entityCommandBufferSystem.AddJobHandleForProducer(this.Dependency);

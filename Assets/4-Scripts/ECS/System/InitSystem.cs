@@ -1,6 +1,7 @@
 ﻿using Game.CustomPool;
 using Game.ECS.Components;
 using JohanPolosn.UnityInjector;
+using UniRx;
 using Unity.Entities;
 using Unity.Scenes;
 using UnityEngine;
@@ -9,6 +10,8 @@ namespace Game.ECS.System
 {
     public partial class InitSystem : InitSystemBase
     {
+        public static ReactiveProperty<bool> IsInitGameState = new();
+
         private GameState gameState;
         
         protected override void OnStartRunning()
@@ -29,6 +32,8 @@ namespace Game.ECS.System
             gameState = new GameState();
             
             gameState.LoadSave();
+            
+            IsInitGameState.Value = true;
         }
 
         protected override void OnUpdate()
