@@ -33,6 +33,7 @@ namespace Game
             this.email = email.Value;
             this.pass = pass.Value;
             this.nick = nick.Value;
+            this.isRegisteredComplete = true;
         }
 
         public void UpgradePointClick(int step = 1)
