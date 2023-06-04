@@ -26,7 +26,7 @@ namespace Game.ECS_UI.Components
         private Vector2 sizeRootMove;
         private State currentState;
 
-        private float minSwipeDistanceRight = 20f; // Минимальное расстояние свайпа для его считывания
+        private float minSwipeDistanceRight = 140f; // Минимальное расстояние свайпа для его считывания
         private float minSwipeDistanceLeft;
         
         private readonly LazyInject<GameState> gameState = new LazyInject<GameState>();
@@ -37,7 +37,7 @@ namespace Game.ECS_UI.Components
             sequenceRight ??= DOTween.Sequence();
             sequenceLeft ??= DOTween.Sequence();
 
-            minSwipeDistanceLeft = minSwipeDistanceRight * -1;
+            minSwipeDistanceLeft = minSwipeDistanceRight * -1 * mainCanvas.scaleFactor;
 
             autoNextToggle.OnValueChangedAsObservable().Subscribe(SwitchAutoNext).AddTo(this);
             bgButton.OnClickAsObservable().Subscribe(x=> OnClickBgButton()).AddTo(this);
