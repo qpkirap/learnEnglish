@@ -16,7 +16,7 @@ namespace Game
 
         public void LoadSave()
         {
-            userState.LoadSave();
+            //userState.LoadSave();
             
             GlobalInjector.singleton.AddSingleton(this);
         }

@@ -9,7 +9,7 @@ namespace Game.ECS.System
     public partial class LinearCardMoveCalcSystem : MovementSystem
     {
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
-        private UICanvasController canvas;
+        private readonly LazyInject<UICanvasController> canvas = new();
         
         private const float moveSpeed = 2f;
         private const float referenceWidth = 390;
@@ -129,14 +129,7 @@ namespace Game.ECS.System
         
         private UICanvasController GetCanvas()
         {
-            if (canvas != null) return this.canvas;
-
-            Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
-            {
-                canvas = canvasController;
-            }).WithoutBurst().Run();
-
-            return canvas;
+            return canvas.Value;
         }
     }
 }

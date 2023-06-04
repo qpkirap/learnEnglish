@@ -17,10 +17,10 @@ namespace Game.ECS.System
     public partial class FirebaseRegistrationSystem : InitSystemBase
     {
         private static LazyInject<GameState> gameState = new();
+        private static LazyInject<UICanvasController> canvas = new();
 
         private DatabaseReference reference;
         
-        private UICanvasController canvas;
         private FirebaseApp app;
         private FirebaseAuth auth;
         private bool isInit;
@@ -79,7 +79,7 @@ namespace Game.ECS.System
 
                     CreateUserAsync(e, registration.email, registration.pass, registration.nick);
                     
-                    GetCanvas()?.LeaderBoard?.SwitchState(LeaderBoardController.State.RegComplete);
+                    canvas.Value?.LeaderBoard?.SwitchState(LeaderBoardController.State.RegComplete);
 
                     //TryAuthPlayServices();
                 }).WithStructuralChanges().WithoutBurst().Run();
@@ -94,7 +94,7 @@ namespace Game.ECS.System
                     {
                         EntityManager.AddComponentData(appEntity, new AsyncTag());
 
-                        GetCanvas()?.LeaderBoard?.SwitchState(LeaderBoardController.State.RegComplete);
+                        canvas.Value?.LeaderBoard?.SwitchState(LeaderBoardController.State.RegComplete);
 
                         SignInUserAsync(appEntity, gameState.Value.UserState.Email, gameState.Value.UserState.Pass);
 
@@ -174,21 +174,9 @@ namespace Game.ECS.System
 
         #endregion
 
-        private UICanvasController GetCanvas()
-        {
-            if (canvas != null) return this.canvas;
-
-            Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
-            {
-                canvas = canvasController;
-            }).WithoutBurst().Run();
-
-            return canvas;
-        }
-
         private bool TryShowRegistrationPanel()
         {
-            var canvas = GetCanvas();
+            var canvas = FirebaseRegistrationSystem.canvas.Value;
 
             if (canvas == null) return false;
             
@@ -304,6 +292,7 @@ namespace Game.ECS.System
 
                 if (entity != Entity.Null)
                 {
+                    HideRegPanel();
                     // Firebase user has been created.
                     Firebase.Auth.FirebaseUser newUser = task.Result;
                     
@@ -315,15 +304,10 @@ namespace Game.ECS.System
 
                     gameState.Value.UserState.SaveData();
 
-                    if (entity != Entity.Null)
-                    {
-                        EntityManager.RemoveComponent<AsyncTag>(entity);
-                        EntityManager.AddComponentData(entity, new FirebaseRegistrationCompleteTag());
-                        EntityManager.AddComponentData(entity, new FirebaseAppReadyTag());
-                    }
+                    EntityManager.RemoveComponent<AsyncTag>(entity);
+                    EntityManager.AddComponentData(entity, new FirebaseRegistrationCompleteTag());
+                    EntityManager.AddComponentData(entity, new FirebaseAppReadyTag());
 
-                    HideRegPanel();
-                    
                     isActiveAsync = false;
 
                     Debug.LogFormat("Firebase user created successfully: {0} ({1})",
@@ -345,9 +329,11 @@ namespace Game.ECS.System
 
         private void HideRegPanel()
         {
-            var canvas = GetCanvas();
+            var canvas = FirebaseRegistrationSystem.canvas.Value;
             
-            canvas?.registrationPanel.Disable();
+            if (canvas == null) return;
+
+            canvas.registrationPanel.Disable();
         }
 
         #region DataBase

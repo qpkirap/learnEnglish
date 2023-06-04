@@ -862,7 +862,6 @@ GameObject:
   - component: {fileID: 132112525}
   - component: {fileID: 132112524}
   - component: {fileID: 132112528}
-  - component: {fileID: 132112529}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -977,19 +976,6 @@ MonoBehaviour:
   LeaderCanvas: {fileID: 1412720581}
   adsCanvas: {fileID: 2137820723}
   registrationPanel: {fileID: 2119673681}
---- !u!114 &132112529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 132112522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea7d7495833204790ba1d3a8755397f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ConversionMode: 1
 --- !u!1 &147308686
 GameObject:
   m_ObjectHideFlags: 0

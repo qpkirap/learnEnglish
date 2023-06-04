@@ -10,7 +10,7 @@ namespace Game.ECS.System.SpawnCard
 {
     public partial class SpawnCardSystem : UpdateSystem
     {
-        private UICanvasController canvas;
+        private readonly LazyInject<UICanvasController> canvas = new();
         private const float offsetSenterY = 107;
 
         protected override void OnCreate()
@@ -68,14 +68,7 @@ namespace Game.ECS.System.SpawnCard
 
         private UICanvasController GetCanvas()
         {
-            if (canvas != null) return this.canvas;
-
-            Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
-            {
-                canvas = canvasController;
-            }).WithoutBurst().Run();
-
-            return canvas;
+            return canvas.Value;
         }
 
         private Vector2 GetRandomPositionOutScreen()

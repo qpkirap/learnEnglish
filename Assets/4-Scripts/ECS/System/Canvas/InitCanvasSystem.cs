@@ -6,11 +6,13 @@ namespace Game.ECS.System
     public partial class InitCanvasSystem : UpdateSystem
     {
         private bool isInject;
-        private UICanvasController canvas;
+        private LazyInject<UICanvasController> canvas = new();
         private Entity canvasEntity;
         
         protected override void OnUpdate()
         {
+            if (!HasSingleton<UICanvasControllerTag>()) return;
+            
             if (isInject) return;
             
             if (GetCanvas(out var entity) == null) return;
@@ -24,19 +26,9 @@ namespace Game.ECS.System
         
         private UICanvasController GetCanvas(out Entity entity)
         {
-            entity = canvasEntity;
-            
-            if (canvas != null)
-            {
-                return this.canvas;
-            }
+            var canvas = this.canvas.Value;
 
-            Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
-            {
-                canvas = canvasController;
-                canvasEntity = e;
-
-            }).WithoutBurst().Run();
+            entity = canvas.entity;
 
             return canvas;
         }

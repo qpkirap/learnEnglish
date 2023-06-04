@@ -9,7 +9,7 @@ namespace Game.ECS.System
     public partial class RatingUpgradePointClickSystem : UpdateSystem
     {
         private static LazyInject<GameState> gameState = new();
-        private UICanvasController canvas;
+        private readonly LazyInject<UICanvasController> canvas = new();
         
         protected override void OnUpdate()
         {
@@ -35,14 +35,7 @@ namespace Game.ECS.System
         
         private UICanvasController GetCanvas()
         {
-            if (canvas != null) return this.canvas;
-
-            Entities.WithAll<UICanvasController>().ForEach((Entity e, in UICanvasController canvasController) =>
-            {
-                canvas = canvasController;
-            }).WithoutBurst().Run();
-
-            return canvas;
+            return canvas.Value;
         }
     }
 }
