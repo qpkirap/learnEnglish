@@ -26,7 +26,7 @@ namespace Game.ECS_UI.Components
 
             manager.AddComponentData(entity, new UICanvasControllerTag());
             
-            GlobalInjector.singleton.AddSingleton(this);
+            DI.Add(this);
         }
     }
 

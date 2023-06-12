@@ -8,10 +8,10 @@ namespace Game.ECS.System
 {
     public partial class CanvasSystem : UpdateSystem
     {
-        private readonly LazyInject<UICanvasController> canvas = new();
+        private LazyInject<UICanvasController> canvas = new();
         private Entity canvasE;
 
-        private static LazyInject<GameState> gameState = new();
+        private LazyInject<GameState> gameState = new();
 
         protected override void OnUpdate()
         {

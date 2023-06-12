@@ -13,11 +13,12 @@ using UnityEngine;
 
 namespace Game.ECS.System
 {
+    [AlwaysUpdateSystem]
     [UpdateAfter(typeof(InitSystem))]
     public partial class FirebaseRegistrationSystem : InitSystemBase
     {
-        private static LazyInject<GameState> gameState = new();
-        private static LazyInject<UICanvasController> canvas = new();
+        private LazyInject<GameState> gameState = new();
+        private LazyInject<UICanvasController> canvas = new();
 
         private DatabaseReference reference;
         
@@ -176,11 +177,9 @@ namespace Game.ECS.System
 
         private bool TryShowRegistrationPanel()
         {
-            var canvas = FirebaseRegistrationSystem.canvas.Value;
-
-            if (canvas == null) return false;
+            if (canvas.Value == null) return false;
             
-            canvas.registrationPanel.InjectActivation();
+            canvas.Value.registrationPanel.InjectActivation();
 
             return true;
         }
@@ -329,11 +328,9 @@ namespace Game.ECS.System
 
         private void HideRegPanel()
         {
-            var canvas = FirebaseRegistrationSystem.canvas.Value;
-            
-            if (canvas == null) return;
+            if (canvas.Value == null) return;
 
-            canvas.registrationPanel.Disable();
+            canvas.Value.registrationPanel.Disable();
         }
 
         #region DataBase

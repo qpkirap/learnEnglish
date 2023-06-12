@@ -13,12 +13,13 @@ namespace Game.ECS.System
         public static ReactiveProperty<bool> IsInitGameState = new();
 
         private GameState gameState;
+        private CompositionRoot root;
         
         protected override void OnStartRunning()
         {
             Application.targetFrameRate = 60;
-
-            GlobalInjector.singleton ??= new DependencyInjector();
+            
+            root = DInjector.CreateCompositionRoot(DITag.game);
 
             var factorySingleton = GetSingletonEntity<FactoriesCardData>();
             var factoryData = EntityManager.GetComponentData<FactoriesCardData>(factorySingleton);
