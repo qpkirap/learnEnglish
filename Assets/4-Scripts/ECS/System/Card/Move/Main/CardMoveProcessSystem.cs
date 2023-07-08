@@ -20,8 +20,10 @@ namespace Game.ECS.System
                 {
                     var rootSizeDelta = card.Instance.Root.sizeDelta;
                     rootSizeDelta.x = move.Width;
+                    rootSizeDelta.y = Screen.height;
 
                     card.Instance.Root.DOSizeDelta(rootSizeDelta, .25f);
+                    card.Instance.Root.DOAnchorPos(new Vector2(Screen.width / 2, 844/2), 0f);
                     card.BaseInstance.currentWidth = rootSizeDelta.x;
                 }
             }).WithoutBurst().Run();

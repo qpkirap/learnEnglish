@@ -37,6 +37,14 @@ namespace Game.ECS_UI.Components
 
         public Button NexButton => nexButton;
 
+        private void OnEnable()
+        {
+            nexButton.OnClickAsObservable().Subscribe(x =>
+            {
+                OnClick();
+            }).AddTo(disposable);
+        }
+        
         private void OnClick()
         {
             if (entity != Entity.Null && !manager.HasComponent<CardMoveProcess>(entity))
@@ -44,14 +52,6 @@ namespace Game.ECS_UI.Components
                 manager.AddComponentData(entity, new ClickNextButtonTag());
                 manager.AddComponentData(entity, new SpiralMoveTag());
             }
-        }
-
-        private void OnEnable()
-        {
-            nexButton.OnClickAsObservable().Subscribe(x =>
-            {
-                OnClick();
-            }).AddTo(disposable);
         }
 
         private void OnDisable()

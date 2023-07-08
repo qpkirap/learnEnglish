@@ -31,6 +31,6 @@ namespace Game
     {
         private T value;
 
-        public T Value => value ??= GlobalInjector.singleton?.Get<T>();
+        public T Value => value ??= GlobalInjector.singleton.Get<T>();
     }
 }

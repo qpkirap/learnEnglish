@@ -24,7 +24,7 @@ namespace Game.ECS_UI.Components
         private EntityManager manager;
 
 
-        private void Awake()
+        private void OnEnable()
         {
             manager = World.DefaultGameObjectInjectionWorld.EntityManager;
             

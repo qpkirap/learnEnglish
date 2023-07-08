@@ -41,12 +41,12 @@ namespace Game.ECS_UI.Components
         {
             InitSubscription();
             
-            gameObject.SetActive(true);
+            //gameObject.SetActive(true);
         }
 
         public void Disable()
         {
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
         }
 
         private void InitSubscription()
