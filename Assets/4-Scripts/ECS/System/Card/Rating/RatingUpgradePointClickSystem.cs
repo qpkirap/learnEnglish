@@ -8,8 +8,8 @@ namespace Game.ECS.System
     [UpdateAfter(typeof(FirebaseLeaderPointClickUpdateSystem))]
     public partial class RatingUpgradePointClickSystem : UpdateSystem
     {
-        private static LazyInject<GameState> gameState = new();
-        private readonly LazyInject<UICanvasController> canvas = new();
+        private LazyInject<GameState> gameState = new();
+        private LazyInject<UICanvasController> canvas = new();
         
         protected override void OnUpdate()
         {

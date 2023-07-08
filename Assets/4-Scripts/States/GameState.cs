@@ -18,7 +18,7 @@ namespace Game
         {
             userState.LoadSave();
             
-            GlobalInjector.singleton.AddSingleton(this);
+            DI.Add(this);
         }
 
         public void CreateSave()
@@ -31,6 +31,6 @@ namespace Game
     {
         private T value;
 
-        public T Value => value ??= GlobalInjector.singleton.Get<T>();
+        public T Value => value ??= DI.Get<T>();
     }
 }

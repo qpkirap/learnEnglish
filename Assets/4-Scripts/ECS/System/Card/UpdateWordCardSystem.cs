@@ -12,7 +12,7 @@ namespace Game.ECS.System
         private EndSimulationEntityCommandBufferSystem _entityCommandBufferSystem;
 
         private static TextToSpeech textToSpeechSystem;
-        private static LazyInject<GameState> gameState = new();
+        private LazyInject<GameState> gameState = new();
         
         private static SpeechType lastSpeechType = SpeechType.None;
 

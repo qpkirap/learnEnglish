@@ -11,7 +11,7 @@ namespace Game.ECS.System
     [UpdateAfter(typeof(NextCardSystem))]
     public partial class FirebaseLeaderPointClickUpdateSystem : UpdateSystem
     {
-        private static LazyInject<GameState> gameState = new();
+        private LazyInject<GameState> gameState = new();
 
         private const int MaxScores = 20;
         private const float UpdateCycleTime = 60;
