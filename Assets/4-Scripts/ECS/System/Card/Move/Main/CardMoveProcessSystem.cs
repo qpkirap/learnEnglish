@@ -21,10 +21,18 @@ namespace Game.ECS.System
                     var rootSizeDelta = card.Instance.Root.sizeDelta;
                     rootSizeDelta.x = move.Width;
                     rootSizeDelta.y = Screen.height;
+ 
+                    //card.Instance.Root.DOSizeDelta(rootSizeDelta, 1f); 
 
-                    card.Instance.Root.DOSizeDelta(rootSizeDelta, .25f);
-                    card.Instance.Root.DOAnchorPos(new Vector2(Screen.width / 2, 844/2), 0f);
+                    var sequence = DOTween.Sequence(); 
+
+                    sequence.Append(card.Instance.Root
+                            .DOAnchorPos(new Vector2(Screen.width / 2, Screen.height / 2), .3f))
+                        .Append(card.Instance.Root
+                            .DOSizeDelta(rootSizeDelta, 0.3f));
                     card.BaseInstance.currentWidth = rootSizeDelta.x;
+
+                    sequence.Play();
                 }
             }).WithoutBurst().Run();
         }
